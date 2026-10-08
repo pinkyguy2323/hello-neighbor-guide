@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1. Основы карты: небо, свет и рельеф — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🌤️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>1. Основы карты: небо, свет и рельеф</h1><p>Создаём первый уровень с нуля: разберём 4 главных окна редактора, поставим солнце и небо, настроим дневной и ночной свет, выкопаем холм, дорогу и площадку под дом. В конце — почему персонаж проваливается и как это чинить за 2 минуты.</p><div class="badges"><span class="badge">★ Легко</span><span class="badge orange">Обязательный урок</span><span class="badge green">Результат: играбельная поляна с домом</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#need">Что понадобится</a></li>
+<li><a href="#editor">Окна редактора: Content Browser, Outliner, Details, Viewport</a></li>
+<li><a href="#level">Создание и сохранение карты</a></li>
+<li><a href="#camera">Камера и трансформация: горячие клавиши</a></li>
+<li><a href="#sky">Небо: солнце, Sky Light, Atmosphere, туман</a></li>
+<li><a href="#light">Освещение: типы ламп и Mobility</a></li>
+<li><a href="#build">Build Lighting: когда и как запекать</a></li>
+<li><a href="#landscape">Landscape: холм, дорога, яма, площадка</a></li>
+<li><a href="#fall">Почему проваливаюсь сквозь землю</a></li>
+<li><a href="#check">Как проверить + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>К концу урока у вас будет уровень <code>MyFirstMap</code>: голубое небо, солнце с мягкими тенями, туман у горизонта, участок земли 63×63 м с холмом, грунтовой дорогой, ямой и ровной площадкой 12×12 м под будущий дом. Вы сможете нажать <span class="kbd">Alt</span>+<span class="kbd">P</span> (Play) и побегать от третьего/первого лица без провалов.</p>
+<div class="term"><b>Уровень (Level / Map)</b> — файл <code>.umap</code> со всей сценой: земля, дома, свет, точки спавна. <b>Viewport</b> — 3D-окно, где вы летаете. <b>World Outliner</b> — список всех объектов уровня. <b>Details</b> — настройки выбранного объекта. <b>Content Browser</b> — файловый менеджер всех ассетов игры.</div>
+<h2 id="need">Что понадобится</h2>
+<ul>
+<li>Открытый Hello Neighbor Mod Kit (UE 4.20.3).</li>
+<li>Пустой плагин мода (Edit → Plugins → New Plugin) — карту делаем внутри него, например <code>Plugins/MyMod/Content/Maps/MyFirstMap.umap</code>.</li>
+<li>10–15 минут на компиляцию шейдеров при первом запуске — не пугайтесь «подвисшего» редактора.</li>
+<li>Режим <code>Place Actors</code> (слева): вкладки Basic, Lights, Visual Effects, Volumes.</li>
+</ul>
+<h2 id="editor">Окна редактора: 4 главных панели</h2>
+<h3>1. Viewport — ваш глаз</h3>
+<p>Большое 3D-окно по центру. Вверху кнопки: <b>Perspective / Top / Front / Side</b> (вид), <b>Lit → Unlit / Wireframe</b> (режим отображения), скорость полёта (иконка человечка). Если сцена чёрная — вы в режиме Unlit или камера под землёй, нажмите <span class="kbd">F</span> чтобы сфокусироваться на объекте.</p>
+<h3>2. Content Browser — склад</h3>
+<p>Нижняя панель. Здесь папки <code>Content</code> игры и вашего плагина. Кнопка <b>Add New</b> создаёт Blueprint/Material/Level. Строка поиска + фильтр по типу (Static Mesh, Material, Blueprint). <b>Правый клик → Show in Explorer</b> покажет файл на диске. Никогда не таскайте <code>.uasset</code> через Windows-проводник — сломаете ссылки, используйте <b>Migrate</b>.</p>
+<h3>3. World Outliner — список</h3>
+<p>Правая верхняя панель. Каждый объект уровня строкой: <code>DirectionalLight, SkyLight, Landscape, PlayerStart</code>. Глазик — видимость, поиск — фильтр. Если потеряли объект — кликните по нему в Outliner и нажмите <span class="kbd">F</span>.</p>
+<h3>4. Details — настройки</h3>
+<p>Правая нижняя панель. Показывает всё выбранное: Transform (Location/Rotation/Scale), Light (Intensity, Color), Collision. Строка поиска вверху Details — ваш лучший друг: вбейте <code>Intensity</code> вместо листания 200 параметров.</p>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: верните потерянную панель</strong><p>Закрыли Content Browser? <code>Window → Content Browser → Content Browser 1</code>. Пропал Outliner? <code>Window → World Outliner</code>. В Mod Kit раскладка сбрасывается через <code>Window → Reset Layout</code>.</p></div></div>
+<h2 id="level">Создание и сохранение карты</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Создаём пустой уровень</h4></div><p><code>File → New Level → Empty Level</code> (не Default — там уже стоит лишнее освещение, которое запутает). Вы увидите чёрный Viewport с сеткой — это нормально, света пока нет.<br><b>Где находится:</b> верхнее меню File. <b>Что выбрать:</b> именно Empty. Default тянет готовый Sky и пол, которые потом дублируются.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Сохраняем с правильным именем</h4></div><p><code>File → Save Current As…</code> → перейдите в папку своего плагина <code>/Mods/ВашМод/Content/Maps/</code> → имя <code>MyFirstMap</code> <b>без пробелов и русских букв</b> (только латиница, цифры, _). Пробелы ломают упаковку в .pak и ссылки в Blueprint (потом «Failed to load»).<br>Нажимайте <span class="kbd">Ctrl</span>+<span class="kbd">S</span> каждые 5 минут. Mod Kit 4.20 любит вылетать на слабых ПК при Build.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Ставим точку спавна</h4></div><p>Из <code>Place Actors → Basic → Player Start</code> перетащите в центр карты. Поднимите на 100 см над землёй (Location Z +100), иначе появитесь под ландшафтом. Без Player Start кнопка Play спавнит вас в 0,0,0 — часто внутри земли.</p></div>
+<div class="alert alert-error"><div class="ico">⛔</div><div><strong>Частая ошибка: карта вне плагина</strong><p>Сохранили в <code>Content/Maps</code> самого Mod Kit, а не в свой плагин? При Package мод будет пустым. Перенесите через Content Browser: правый клик → Move To → папка плагина.</p></div></div>
+<h2 id="camera">Камера и трансформация: горячие клавиши</h2>
+<div class="table-wrap"><table><tr><th>Действие</th><th>Клавиши / мышь</th><th>Зачем</th></tr>
+<tr><td>Лететь вперёд/назад/влево/вправо</td><td><span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span> + правая кнопка мыши зажата</td><td>Осмотр уровня. Без зажатой ПКМ WASD не работает!</td></tr>
+<tr><td>Вверх / вниз</td><td><span class="kbd">Q</span> / <span class="kbd">E</span> или <span class="kbd">Q</span>/<span class="kbd">E</span></td><td>Подняться над домом / спуститься</td></tr>
+<tr><td>Скорость полёта</td><td>Колесо мыши + цифры <span class="kbd">1</span>–<span class="kbd">8</span></td><td>1 — медленно для комнаты, 6–8 — для улицы</td></tr>
+<tr><td>Вращать камеру</td><td>Зажать ПКМ + двигать мышь</td><td>Осмотреться</td></tr>
+<tr><td>Фокус на объекте</td><td><span class="kbd">F</span></td><td>Мгновенно подлететь к выбранному</td></tr>
+<tr><td>Перемещение / Вращение / Масштаб</td><td><span class="kbd">W</span> — Move, <span class="kbd">E</span> — Rotate, <span class="kbd">R</span> — Scale (когда ПКМ отпущена!)</td><td>Не путайте с WASD-полётом: гизмо работает только без зажатой ПКМ</td></tr>
+<tr><td>Дублировать</td><td><span class="kbd">Alt</span> + тянуть стрелку гизмо</td><td>Быстро копировать стены</td></tr>
+<tr><td>Привязка к сетке</td><td>Кнопка магнита вверху Viewport; <span class="kbd">Ctrl</span>+стрелка = шаг 10 см</td><td>Ровные стены без щелей</td></tr>
+<tr><td>Play / Stop</td><td><span class="kbd">Alt</span>+<span class="kbd">P</span> / <span class="kbd">Esc</span></td><td>Тест игры</td></tr>
+</table></div>
+<p><b>Location</b> — координаты X/Y/Z (где стоит). <b>Rotation</b> — поворот в градусах (дверь на 90°). <b>Scale</b> — размер (1.0 = оригинал, 2.0 = вдвое больше). Меняйте или стрелками в Viewport, или цифрами в Details — цифры точнее.</p>
+<div class="alert alert-warn"><div class="ico">⚠️</div><div><strong>Главная путаница: W/E/R</strong><p>С зажатой ПКМ <code>WASD</code> — полёт. С отпущенной ПКМ <code>W/E/R</code> — режимы гизмо. Если нажали W и объект не двигается стрелками — вы просто летите. Отпустите мышь и нажмите W ещё раз.</p></div></div>
+<h2 id="sky">Небо: ставим солнце и атмосферу</h2>
+<p>Небо в UE — не «картинка», а связка из 5 акторов. Добавляйте через <code>Place Actors → Lights / Visual Effects</code> перетаскиванием на сцену:</p>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Directional Light — солнце</h4></div><p>Это параллельные лучи «бесконечного» солнца. Поверните: Rotation Y ≈ -50° (высота), Z ≈ 30° (азимут). Intensity для дня <b>3.0–5.0</b>, цвет чуть тёплый <b>#FFF2DF</b>. Галочка <code>Cast Shadows</code> — вкл. Именно этот свет даёт длинные тени от дома, как в Hello Neighbor.<br><b>Где искать:</b> Place Actors → Lights → Directional Light.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Sky Light — свет неба</h4></div><p>Мягкая заливка со всех сторон, чтобы тени не были чисто чёрными. Details → <code>Source Type → SLS Captured Scene</code>, Intensity <b>1.0</b>. Без Sky Light ночь и interiors выглядят «плоскими».</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Sky Atmosphere + Exponential Height Fog — воздух</h4></div><p><code>Sky Atmosphere</code> (Visual Effects) — голубое небо и горизонт. <code>Exponential Height Fog</code> — дымка вдали: Density <b>0.01–0.03</b> для дня, 0.05 для утра. Если в вашей сборке Mod Kit есть старый <code>Atmospheric Fog</code> вместо Sky Atmosphere — используйте его, принцип тот же: Density 0.3–0.6. Оба сразу не нужны — будет пересвет.<br><b>Версия:</b> ранние Mod Kit (4.18/4.19) шли с Atmospheric Fog, финальный (4.20.3) — уже со Sky Atmosphere. Проверьте что есть у вас через поиск в Place Actors.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">4</div><h4>Post Process Volume — цветокор</h4></div><p>Place Actors → Visual Effects → Post Process Volume. В Details включите <code>Infinite Extent (Unbound) = true</code>, иначе эффект только внутри куба. Для старта: Exposure 1.0, Saturation 1.1, чуть тёплый White Balance. Под водой позже сделаем второй Volume с синим оттенком (см. <a href="water.html">урок про воду</a>).</p></div>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: быстрый пресет неба</strong><p>День: Directional 4.0 тёплый, Sky 1.0, Fog 0.015. Закат: Directional 2.0 оранжевый #FF9A3C, угол Y -12°, Fog 0.04. Ночь: Directional 0.15 синий #5A7BFF (луна), Sky 0.25. Сохраните 3 поворота солнца в блокноте — пригодятся для <a href="day-night.html">дня/ночи</a>.</p></div></div>
+<h2 id="light">Освещение: типы ламп и Mobility</h2>
+<div class="table-wrap"><table><tr><th>Источник</th><th>Что это</th><th>Когда использовать</th></tr>
+<tr><td><code>Directional Light</code></td><td>Солнце/луна, светит везде одинаково</td><td>Всегда 1 шт на улицу</td></tr>
+<tr><td><code>Point Light</code></td><td>Лампочка: светит во все стороны из точки</td><td>Люстра, костёр, лампа на столе. Attenuation Radius 400–800</td></tr>
+<tr><td><code>Spot Light</code></td><td>Фонарик: конус света</td><td>Фонарь над дверью, свет из окна. Outer Cone 40–60°</td></tr>
+<tr><td><code>Sky Light</code></td><td>Небо-заливка</td><td>1 шт, всегда</td></tr>
+</table></div>
+<h3>Mobility: Static / Stationary / Movable — самое важное</h3>
+<ul>
+<li><b>Static</b> — не двигается и не меняется в игре. Самый быстрый, запекается в Build Lighting. Для стен, солнца дневного.</li>
+<li><b>Stationary</b> — стоит на месте, но цвет/яркость можно менять в Blueprint (лампа, что гаснет). Компромисс.</li>
+<li><b>Movable</b> — можно двигать и мигать каждый кадр (фонарик игрока, rotating sun для дня/ночи). Самый «дорогой», тени в реальном времени.</li>
+</ul>
+<p>Ключевые параметры в Details: <code>Intensity</code> (яркость; лампа 500–2000 в UE4-единицах, солнце 3–10), <code>Light Color</code>, <code>Attenuation Radius</code> (как далеко добивает Point/Spot), <code>Source Radius</code> (мягкость тени), <code>Cast Shadows</code>.</p>
+<h3>6 готовых пресетов (скопируйте цифры)</h3>
+<div class="table-wrap"><table><tr><th>Сцена</th><th>Настройки</th></tr>
+<tr><td>Ясный день</td><td>Directional 4.0 #FFF3E0, Y -55°, Sky 1.0, Fog 0.012</td></tr>
+<tr><td>Закат хоррор</td><td>Directional 2.2 #FF7A2F, Y -14°, Sky 0.6, Fog 0.045 + Post: Saturation 1.25</td></tr>
+<tr><td>Ночь</td><td>Directional 0.2 #6A86FF (луна), Sky 0.3, Fog 0.03 + 2–3 Point тёплых в окнах</td></tr>
+<tr><td>Комната</td><td>Point по центру потолка: Intensity 1200, Radius 700, цвет #FFE7C2, Mobility Stationary + Spot в углу как торшер</td></tr>
+<tr><td>Лампа на столе</td><td>Point 600, Radius 350, Source Radius 8 (мягкая тень), + маленький Emissive-материал абажура</td></tr>
+<tr><td>Свет из окна</td><td>Spot снаружи окна внутрь: Intensity 3000, Cone 45°, цвет холодный #BFD9FF, Cast Shadows вкл — даст полосы на полу</td></tr>
+</table></div>
+<h2 id="build">Build Lighting: когда и как запекать</h2>
+<p>Static и Stationary свет считается заранее кнопкой <code>Build → Build Lighting Only</code>. Без Build тени квадратные/течёт свет, выскакивает предупреждение «Lighting needs to be rebuilt». Movable в Build не нуждается.</p>
+<div class="step"><div class="step-head"><div class="step-num">★</div><h4>Правильный Build за 4 шага</h4></div><p>1. Добавьте <code>Lightmass Importance Volume</code> (Place Actors → Volumes) и растяните кубом вокруг дома/игровой зоны — иначе движок считает свет на всю бесконечность и всё тёмное.<br>2. <code>Build → Lighting Quality → Preview</code> для черновика, <code>Medium/Production</code> для финала.<br>3. Нажмите <code>Build Lighting Only</code>. Ждите, не трогайте редактор.<br>4. Если после Build всё стало тёмным — см. <a href="troubleshooting.html">ошибки</a>: чаще всего свет Static без Volume или Intensity 0.<br><b>Когда НЕ нужен Build:</b> всё освещение Movable (но будет тяжелее для FPS).</p></div>
+<h2 id="landscape">Landscape: холм, дорога, яма, площадка</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Создаём землю</h4></div><p>Слева вверху Modes → <code>Landscape → Create New</code>. Для первой карты: Section Size 63×63, Sections Per Component 1, Overall Resolution 63×63 (маленькая быстрая карта). Material — любой <code>M_Ground</code> из Mod Kit или стандартный <code>M_Landscape</code>. Нажмите <b>Create</b> — появится серая земля.<br>Большие карты (505×505 и выше) — только когда будет дом и оптимизация, иначе лаги.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Инструменты Sculpt: что делает каждый</h4></div><p>Выберите Landscape → вкладка <b>Sculpt</b>:<br>• <b>Sculpt</b> — поднимает/опускает (зажатый <span class="kbd">Shift</span> — наоборот, яма). Strength 0.3, Size 800 для холма.<br>• <b>Smooth</b> — сглаживает рваные края. Пройдитесь после каждого холма.<br>• <b>Flatten</b> — выравнивает под высоту клика. Идеален для площадки под дом: кликните на нужной высоте, проведите по зоне 12×12 м.<br>• <b>Noise</b> — лёгкие неровности природы (Strength 0.05, иначе марс).<br>• <b>Erosion</b> (если есть в 4.20) — размыв дождём, делает склоны естественными.<br><b>Paint</b> — раскраска слоями (трава/земля/асфальт), если у материала есть Layer Blend. Сначала назначьте материал с 2–3 слоями, иначе Paint нечего красить.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Практика: 4 формы за 10 минут</h4></div><p><b>Холм:</b> Sculpt, Size 1200, Strength 0.4, 3 клика в центре → Smooth по краям.<br><b>Дорога:</b> Flatten узкой кистью от калитки к дому + Paint коричневым слоем, Size 300.<br><b>Яма:</b> Sculpt + зажатый Shift, Size 500, Strength 0.5, 2 сек → Smooth.<br><b>Площадка под дом:</b> Flatten, клик на высоте дома, закрасьте квадрат 1200×1200 см. Проверьте линейкой: стены должны стоять на ровном, иначе щели (см. <a href="building.html">строительство</a>).</p></div>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: Landscape Material</strong><p>Простой материал земли: <code>Layer Blend (Grass, Dirt, Rock) → BaseColor</code>. В Paint создайте <code>Layer Info</code> для каждого слоя (правый клик → Create). Без Layer Info кисть красить не будет — самая частая жалоба новичков.</p></div></div>
+<h2 id="fall">Почему персонаж проваливается сквозь землю</h2>
+<p>Топ-4 причины по частоте:</p>
+<ol>
+<li><b>Нет Collision у Landscape.</b> В Details ландшафта <code>Collision → Collision Enabled = Query and Physics</code>, <code>Collision Preset = BlockAll</code>. Если стоит NoCollision — вы падаете в бесконечность.</li>
+<li><b>Player Start под землёй или в воздухе высоко.</b> Поднимите на 50–150 см над поверхностью. Падение с 2000 см тоже может «прошить» тонкий пол — ставьте ближе.</li>
+<li><b>Масштаб Landscape ×0 или дырка от Sculpt.</b> Слишком глубокая яма + маленькая толщина = физика не успевает. Сгладьте, поднимите персонажа.</li>
+<li><b>Вы тестите камерай, а не персонажем.</b> В Play Settings стоит Spectator? Поставьте <code>GameMode → Default Pawn = BP_PlayerCharacter</code> из Mod Kit.</li>
+</ol>
+<h2 id="check">Как проверить + частые ошибки</h2>
+<ul class="checklist">
+<li>Нажали Play — видно небо, солнце, тени от Player Start двигаются при вращении Directional.</li>
+<li>Побегали по холму/дороге/яме — нигде не провалились, площадка ровная.</li>
+<li>Build Lighting без красных ошибок, свет не «течёт» сквозь стены.</li>
+<li>Карта сохранена в папке плагина, имя латиницей.</li>
+</ul>
+<details><summary>Свет слишком яркий / всё белое</summary><p>Уменьшите Directional до 3.0, проверьте Exposure в Post Process (должно быть ~1.0) и не стоят ли два Directional друг на друге (удалите дубликат в Outliner).</p></details>
+<details><summary>После Build всё стало тёмным</summary><p>Добавьте Lightmass Importance Volume, переключите свет на Movable для теста, пересоберите на Preview. Подробнее — <a href="troubleshooting.html">справочник ошибок</a>.</p></details>
+<details><summary>Небо чёрное днём</summary><p>Нет Sky Light или Sky Atmosphere без Directional. Добавьте оба + Fog. Проверьте, что в Viewport режим Lit, а не Unlit.</p></details>
+<details><summary>Что делать, если нет Sky Atmosphere / нужной ноды?</summary><p>В 4.18–4.19 используйте Atmospheric Fog. В 4.20 — Sky Atmosphere. Если нет Erosion — обойдитесь Sculpt+Smooth, результат тот же. Не ставьте плагины UE5 — они несовместимы.</p></details>
+<div class="pager">
+<a href="index.html"><span>← Назад</span><strong>Главная</strong></a>
+<a href="building.html"><span>Следующий урок →</span><strong>2. Объекты и строительство дома</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

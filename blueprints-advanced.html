@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8. Advanced Blueprint — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">⚡</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/blueprints-advanced.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Advanced</div><h1>8. Advanced Blueprint</h1><p>Direct/Cast/Interface/Dispatcher, Functions, Arrays/Struct/Enum, honest SaveGame, power grid: generator → switch → lamps → electro-door. Architecture over spaghetti.</p><div class="badges"><span class="badge">Hard</span><span class="badge o">Architecture</span><span class="badge g">Power grid</span></div></div>
+<div class="article">
+<h2>4 ways to talk</h2>
+<div class="tablewrap"><table><tr><th>Way</th><th>When</th></tr>
+<tr><td><b>Direct Ref</b> (eyedropper var)</td><td>2–3 objects forever linked (door knows its lamp)</td></tr>
+<tr><td><b>Cast</b> (are you player?)</td><td>Check class + grab vars (door → HasKey). Simple, hard link</td></tr>
+<tr><td><b>Interface BPI_Interact</b></td><td>One E for everything (door, valve, TV, switch): Trace → Does Implement? → Interact message. No 10 Casts!</td></tr>
+<tr><td><b>Dispatcher OnPowerChanged(bool)</b></td><td>One → many (generator → 10 lamps + door + TV). Lamps Bind on BeginPlay, generator Calls</td></tr></table></div>
+<p>Rule: 1 door + 1 key = Direct. “Is it player?” = Cast. Shared E = Interface. Whole-house power = Dispatcher. Casts across the map = spaghetti + cyclic deps — break with Interface/Dispatcher.</p>
+<h2>Functions, Custom Events, data</h2>
+<p><b>Function</b> <code>TryOpenDoor(Player) → Success?</code> with Inputs/Return + locals (temp counters) — extract anything repeated 2×, verb names. <b>Custom Event</b> <code>PowerOn/Off/Alarm</code> — “do it!” with no return, called cross-BP. <b>Array</b> <code>Lamps[]</code>: ForEach → power all; Length/Add/Remove/Contains. <b>Struct S_Key</b>: <code>KeyID, KeyName, KeyColor, Used</code> → <code>Inventory[]</code> = backpack. <b>Enum E_DoorState</b>: Locked/Closed/Opening/Open/Closing + Switch-on-Enum — kills 3 contradicting bools.</p>
+<div class="bp"><div class="bp-row"><div class="bnode vr">E → Switch on E_DoorState</div><div class="barr">↓</div><div class="bnode fn">Locked: check key | Closed: Opening+TL | Open: Closing | Busy: ignore</div></div></div>
+<h2>SaveGame honesty + power grid</h2>
+<p>UE 4.20 has <code>SaveGame → Save/Load Slot</code> for flags (keys, WaterDrained). But kit packaging + Neighbor AI memory are custom — simple flags save fine, full “Neighbor memory” may not survive .pak updates. Test packaged, not just PIE; else state “one-sitting level”. Grid: <code>BP_Generator (HasFuel? fuel can in shed → IsRunning + loop sound + Call OnPowerChanged(true))</code> → <code>BP_Switch (Powered = Running && SwitchOn)</code> → <code>BP_Lamp (Bind → light + emissive + click)</code> + <code>BP_ElectroDoor (E → Powered? else “No power!” even with key → key check from <a href="puzzles.html">lesson 3</a>)</code>. Native <code>BP_GeneralSwitch</code> if it's the Neighbor's house — AI finds it. Add 10th lamp = Bind, not generator rewrite.</p>
+<div class="bp"><div class="bp-row"><div class="bnode ev">E generator → HasFuel? → Call PowerChanged(true)</div><div class="barr">↓ subscribed</div><div class="bnode fn">Switch: Running && On → Lamps on → Door Powered → E: Powered && Key = open</div></div></div>
+<details><summary>Dispatcher silent / cyclic dep?</summary><p>Bind on lamp BeginPlay (once), Call on power change (Target wired). Door↔lamp mutual Casts → replace with Interface/Dispatcher.</p></details>
+<div class="pager"><a href="custom-assets.html"><span>← Back</span><strong>7. Assets</strong></a><a href="custom-neighbor.html"><span>Next →</span><strong>9. Neighbor</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/blueprints-advanced.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

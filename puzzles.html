@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3. Puzzles: doors, keys, boards — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🔑</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/puzzles.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Puzzles</div><h1>3. Puzzles: doors, keys, keycards, boards &amp; crowbar</h1><p>Timeline door, HasKey/IsLocked, 3 colored keys (ID/Enum), card reader with lamp, boards + crowbar, 6-stage quest. See <a href="water.html">water &amp; shark</a> for the valve finale.</p><div class="badges"><span class="badge">Medium</span><span class="badge o">Core</span><span class="badge g">6 mechanics</span></div></div>
+<div class="article">
+<h2>Simple Timeline door</h2>
+<p><code>BP_DoorSimple</code>: frame Static BlockAll + leaf Movable + Box 200 OverlapAllDynamic. Pivot on hinge (Scene DoorPivot trick). Graph: <code>BeginOverlap → Cast Player → PlayerNear=true → E + Branch → FlipFlop → A Play TL / B Reverse → Update Lerp 0→90 → SetRelativeRotation</code>. Keep trigger 180 cm front-side only.</p>
+<h2>Key door</h2>
+<p><code>BP_Key</code>: <code>Overlap → HasKey=true → sound → Do Once → Destroy</code>. Door <code>IsLocked=true</code>: E → <code>IsLocked? → HasKey? → true: Unlock + TL / false: “Need key”</code>. HasKey lives on player, IsLocked on door.</p>
+<h2>Multiple keys</h2>
+<p>Int ID 1/2/3 + NeededID (simplest), Enum Red/Green/Blue (readable), Name/String tags (flexible, typo-prone), Object Ref (exact). Player: <code>Array int Keys</code> + <code>Contains</code>. Reusable (HN style) vs one-time (<code>Remove</code>).</p>
+<h2>Keycard reader</h2>
+<p>Reader box + red Point + emissive bulb. E: <code>HasCard? → Powered=true → green + material swap + Beep + TL / else red blink + denied sound</code>.</p>
+<h2>Boards + crowbar</h2>
+<p>3 boards Movable BlockAll tilted ±10°, <code>BoardsLeft=3</code> locks main door. Crowbar pickup: <code>HasCrowbar=true → Attach HandSocket</code>. E: <code>BoardsLeft-- → Crack → physics impulse → Delay → Destroy → 0 = Unlock</code>.</p>
+<h2>6-stage quest</h2>
+<p>Red key → wardrobe → crowbar → 3 boards → keycard → e-door → valve finale (<a href="water.html">lesson 4</a>). Track in GameMode + Widget hints.</p>
+<details><summary>Door spins / through-wall trigger / key ignored / snap?</summary><p>DoorPivot trick; shrink trigger + distance check; Print HasKey + Cast class; Timeline 1.0s + Lerp + Movable leaf.</p></details>
+<div class="pager"><a href="building.html"><span>← Back</span><strong>2. Building</strong></a><a href="water.html"><span>Next →</span><strong>4. Water &amp; shark</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/puzzles.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

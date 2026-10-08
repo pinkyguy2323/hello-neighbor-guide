@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9. Replace the Neighbor — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🧍</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/custom-neighbor.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Neighbor</div><h1>9. Replace the Neighbor with your model</h1><p>Safe way: keep native AI, swap only the body. Skeletal/Skeleton/Rig, FBX import, same-skeleton rule, 10 child-BP steps, Area zones, 6 T-Pose diagnoses. From NeighborModKit + Wiki.</p><div class="badges"><span class="badge">Pro</span><span class="badge o">No AI breakage</span><span class="badge g">10 steps</span></div></div>
+<div class="article">
+<div class="alert ai"><div>⚠️</div><div><strong>Not guaranteed on every kit build</strong><p>Kits moved 4.18 → 4.19.1 → 4.20.3; BP names differ. No <code>BP_NeighborCharacter</code>? Search <code>Neighbor*/AI*/Enemy*</code>. Principle (child class + same Skeleton) is identical.</p></div></div>
+<h2>Dictionary + import</h2>
+<p><b>Skeletal Mesh</b> = bendable character (vs Static statue). <b>Skeleton</b> = bone set (thigh→shin→foot); one Skeleton → many models. <b>Rig/Bones</b> + skin weights. <b>Anim Blueprint</b> = “speed → walk/run/caught”. <b>Retargeting</b> = transplanting anims bone-to-bone — perfect only on identical skeletons. Blender: A/T-pose, UE bone names (<code>root,pelvis,spine,head,upperarm_l…</code>), 180 cm, Apply transforms. FBX 2014–18 with bones, no APEX cloth. Import: Skeletal=true, Skeleton = Neighbor's (!), Materials=false, Import Normals. Anims are baked for one Skeleton: same Skeleton = all anims fit; humanoid ≈ Humanoid Rig retarget (fingers/face may warp); quadruped = new anims needed (skip for first mod). NeighborModKit (ModDB) shortcut: pre-wired Neighbor заготовка — swap Mesh only.</p>
+<h2>10 safe steps</h2>
+<p>1) Find <code>BP_NeighborCharacter</code> (Components: Skeletal + Capsule + AI + AnimBP). 2) Never edit original! 3) Right-click → Create Child → <code>BP_Neighbor_My</code>. 4–5) Mesh slot → your model; nudge Location/Rotation inside capsule (often Z −90), Scale 1.0. 6) Skeleton check: names match root/pelvis/spine? Else switch Mesh to Neighbor Skeleton + Retarget. 7) Anim Class stays <b>native</b> (None = T-Pose; foreign skeleton = duplicate + Retarget Manager). 8) Own mats per slot (pink = empty). Compile+Save. 9) Place child + <code>BP_AreaNeighborHouse</code> + <code>BP_AreaPlayerHouse</code> (AI needs territory, Wiki Update 2) + <code>BP_GeneralSwitch</code> for electrics. 10) Playtest: patrol → notice → chase → catch.</p>
+<h2>6 diagnoses</h2>
+<details open><summary>T-Pose slide / twisted limbs / giant / sunk / sliding / wrong style?</summary><p>T-Pose: no AnimBP or foreign Skeleton — restore native Anim, same Skeleton, reimport. Twisted: L↔R mapping or bone lengths — Humanoid Rig per-bone check, Scale 1.0. Giant: Blender units — re-export. Sunk: mesh offset in capsule (Z ≈ −half capsule, −90). Sliding: AnimBP gets no speed — must inherit native Neighbor, not clean Character. Style: monster walks like accountant — new anims or own it with night lighting (<a href="day-night.html">lesson 6</a>).</p></details>
+<div class="pager"><a href="blueprints-advanced.html"><span>← Back</span><strong>8. Advanced</strong></a><a href="troubleshooting.html"><span>Next →</span><strong>Troubleshooting</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/custom-neighbor.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

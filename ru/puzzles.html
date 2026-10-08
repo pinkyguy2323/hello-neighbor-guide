@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3. Головоломки: двери, ключи, карты, доски и лом — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🔑</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>3. Головоломки: двери, ключи, ключ-карты, доски и лом</h1><p>Ядро Hello Neighbor: дверь на Timeline, замок с Boolean-переменными, 3 цветных ключа, электронный считыватель с лампой, заколоченный проход и лом. В финале соберём цепочку из 6 этапов как в оригинале.</p><div class="badges"><span class="badge">★★ Средне</span><span class="badge orange">Самый важный урок</span><span class="badge green">6 механик + финал</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#simple">Простая дверь на Timeline</a></li>
+<li><a href="#key">Дверь с ключом: HasKey / IsLocked</a></li>
+<li><a href="#multi">Несколько ключей: ID, Enum, Name</a></li>
+<li><a href="#card">Ключ-карта и считыватель</a></li>
+<li><a href="#boards">Доски на двери</a></li>
+<li><a href="#crowbar">Лом: механика снятия досок</a></li>
+<li><a href="#mega">Своя головоломка из 6 этапов</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>Создадим Blueprint <code>BP_Door</code> (открывается по E рядом), <code>BP_Key</code> (подбирается), замок с проверкой, электронную дверь с картой, заколоченную дверь с 3 досками и лом. Свяжем всё в квест: <b>ключ → шкаф → лом → доски → ключ-карта → электронная дверь</b>.</p>
+<div class="term"><b>Trigger (Box Collision / Trigger Volume)</b> — невидимая зона, которая сообщает «игрок вошёл/вышел». <b>Timeline</b> — нода-анимация по времени (0→1 за N сек). <b>Boolean</b> — переменная да/нет (true/false). <b>Взаимодействие (Interaction)</b> — в Mod Kit обычно клавиша <code>E</code> через Action Mapping + Overlap или Line Trace.</div>
+<h2 id="simple">Простая дверь: закрыта → открывается с анимацией</h2>
+<h3>Что понадобится</h3>
+<ul><li>Static Mesh двери (SM_Door) + рама. Pivot двери — <b>на петле (сбоку)</b>, иначе дверь крутится вокруг центра как пропеллер!</li><li>Box Collision 200×200×200 перед дверью как Trigger.</li><li>Blueprint Class → Actor → <code>BP_DoorSimple</code>.</li></ul>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Собираем компоненты</h4></div><p>Откройте BP_DoorSimple → вкладка Viewport: добавьте <code>Static Mesh (рама, Static, BlockAll)</code> как Root, <code>Static Mesh (полотно, Movable!)</code>, <code>Box Collision (Trigger)</code>. Полотно — именно Movable, иначе Timeline не сдвинет. В Collision пресете триггера: <code>OverlapAllDynamic</code>, <code>Generate Overlap Events = true</code>.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Pivot на петлю — критично</h4></div><p>Выберите полотно → Details → проверьте Pivot. Если крутится странно: либо в Blender сдвиньте origin к краю, либо в Blueprint вложите полотно в <code>Scene Component (DoorPivot)</code> на краю и вращайте Pivot, а не меш. Это приём №1 от T-Pose-дверей из ModDB-туто «Door, Boards, Nails, Lock and Key».</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Timeline 0→90° за 1 сек</h4></div><p>Event Graph → правый клик → <code>Add Timeline</code>, имя TL_Open. Откройте: <code>Add Float Track → OpenAngle</code>, точки (0с=0, 1с=90), галочка <code>Use Last Keyframe</code>. Длина 1.0. Теперь дверь плавно, а не телепортом.</p></div>
+<h3>Как работает Blueprint</h3>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">OnComponentBeginOverlap (Box)<div class="bp-comment">игрок вошёл в зону</div></div><div class="bp-arrow">↓</div>
+<div class="bp-node func"><b>Cast To BP_PlayerCharacter</b> + <b>IsValid</b><div class="bp-comment">проверяем, что это игрок, а не стул</div></div><div class="bp-arrow">↓</div>
+<div class="bp-node var">Set <b>PlayerNear = true</b> + показать «Нажмите E»<div class="bp-comment">через Widget, см. урок 6</div></div><div class="bp-arrow">↓</div>
+<div class="bp-node event">InputAction Interact (E) + <b>Branch</b> [PlayerNear?]<div class="bp-comment">нажали E рядом?</div></div><div class="bp-arrow">↓</div>
+<div class="bp-node branch"><b>FlipFlop</b> → A: Play TL_Open, B: Reverse TL_Open<div class="bp-comment">открыть / закрыть</div></div><div class="bp-arrow">↓</div>
+<div class="bp-node func"><b>Update:</b> TL_Open → <b>Lerp 0→90</b> → <b>SetRelativeRotation</b> (DoorPivot)<div class="bp-comment">каждый кадр поворачиваем</div></div>
+</div></div>
+<button class="btn bp-toggle" data-bp-toggle="bp1">Показать разбор нод ▼</button>
+<div id="bp1" style="display:none">
+<div class="bp-detail"><b>OnComponentBeginOverlap / EndOverlap</b> — события триггера. Begin — «вошёл», End — «вышел» (там ставим PlayerNear=false). В 4.20 у Box Collision это именно Component-события, не Level-события.</div>
+<div class="bp-detail"><b>Cast To + IsValid</b> — фильтр «только игрок». Без Cast дверь откроет и сосед, и брошенный стул. IsValid спасает от Accessed None, если игрок уже удалён.</div>
+<div class="bp-detail"><b>FlipFlop</b> — переключатель: первое нажатие E идёт в A (открыть), второе — в B (закрыть). Не используйте два отдельных E — запутаетесь.</div>
+<div class="bp-detail"><b>SetRelativeRotation</b> — крутим относительно рамы, а не мира. Поэтому дверь работает, даже если весь дом повёрнут на 90°.</div>
+</div>
+<div class="alert alert-error"><div class="ico">⛔</div><div><strong>Частая ошибка: дверь открывается сквозь стену / через стену</strong><p>Триггер слишком большой (радиус 500) — E срабатывает из соседней комнаты. Уменьшите Box до 180×180 и поставьте его только с нужной стороны. Второй вариант — проверка взгляда через Line Trace (см. продвинутые).</p></div></div>
+<h2 id="key">Дверь с ключом: полная схема</h2>
+<p><b>Boolean</b> — тип «да/нет»: <code>HasKey</code> (у игрока есть ключ?), <code>IsLocked</code> (замок закрыт?), <code>DoorOpen</code> (открыта сейчас?). Храните HasKey в <b>PlayerCharacter или GameMode/Inventory</b>, а IsLocked/DoorOpen — в самой двери.</p>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Ключ BP_Key: подбор</h4></div><p>Static Mesh ключа (маленький, 20 см) + Sphere Collision (Overlap). Граф: <code>OnComponentBeginOverlap → Cast To Player → Player.HasKey = true → Play Sound (Pickup) → Destroy Actor (ключ)</code>. Добавьте <code>Do Once</code> перед Destroy, чтобы двойной Overlap не дал 2 ключа. Точку спавна ключа — в шкаф из <a href="building.html">дома</a>.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Дверь проверяет ключ</h4></div><p>В BP_DoorKey добавьте Bool <code>IsLocked = true</code>. На E: <code>Branch [IsLocked?] → true: Cast к Player → Get HasKey → Branch → true: Set IsLocked=false + Play Unlock + Play TL_Open; false: Print «Нужен ключ!»</code>. Если IsLocked уже false — сразу TL_Open.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">InputAction Interact (E) возле двери</div><div class="bp-arrow">↓</div>
+<div class="bp-node branch"><b>Branch: IsLocked?</b><div class="bp-comment">если false — сразу открыть</div></div><div class="bp-arrow">↓ да, закрыта</div>
+<div class="bp-node func">Get Player → Get <b>HasKey</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node branch"><b>Branch: HasKey?</b></div><div class="bp-arrow">↓ true / false</div>
+<div class="bp-node var">TRUE: Set <b>IsLocked=false</b> → Unlock-звук → <b>Play TL_Open</b> | FALSE: <b>Print «Нужен ключ»</b></div>
+</div></div>
+<button class="btn bp-toggle" data-bp-toggle="bp2">Показать разбор нод ▼</button>
+<div id="bp2" style="display:none">
+<div class="bp-detail"><b>Get HasKey</b> — читаем чужую переменную через Cast: <code>Cast To BP_Player → As BP_Player → Get HasKey</code>. Пин As — это «тот самый игрок». Без Cast пин будет пустым (Accessed None).</div>
+<div class="bp-detail"><b>Set IsLocked=false (Unlock)</b> — меняем состояние замка один раз. После — дверь как обычная (FlipFlop).</div>
+<div class="bp-detail"><b>Почему HasKey в игроке, а IsLocked в двери?</b> Ключ — свойство игрока («я несу»), замок — свойство двери («я закрыта»). Если наоборот — второй ключ сломает первую дверь.</div>
+</div>
+<h2 id="multi">Несколько ключей: красный / синий / зелёный</h2>
+<div class="table-wrap"><table><tr><th>Способ</th><th>Как</th><th>Плюсы</th><th>Минусы</th></tr>
+<tr><td><b>Integer ID (рекомендуем новичку)</b></td><td>Ключ: <code>KeyID=1/2/3</code>. Дверь: <code>NeededID=1</code>. Проверка <code>Equal (int)</code></td><td>Просто, 1 переменная</td><td>Легко перепутать цифры — ведите таблицу</td></tr>
+<tr><td><b>Enum E_KeyColor</b></td><td><code>Red/Green/Blue</code>. Дверь сравнивает Enum</td><td>Читаемо, нельзя опечататься в цифре</td><td>Нужно создать Enum-ассет</td></tr>
+<tr><td><b>Name / String</b></td><td><code>KeyTag="Basement"</code></td><td>Гибко, любое имя</td><td>Опечатка «Basment» = баг. String медленнее</td></tr>
+<tr><td><b>Object Reference</b></td><td>Дверь хранит ссылку на конкретный ключ-актор</td><td>100% точно тот ключ</td><td>Сложно, ссылка бьётся при удалении</td></tr>
+</table></div>
+<p><b>Практика:</b> сделайте <code>BP_Key (KeyID int, Editable)</code>: 3 копии с ID 1/2/3 и цветами (красный/синий/зелёный материал). В игроке — <code>Array int Keys</code> или 3 Bool (HasRed/HasBlue/HasGreen). Дверь: <code>NeededID</code> → <code>Contains</code> в массиве. Так ключ не тратится зря на чужую дверь.</p>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: тратится ли ключ?</strong><p>Для Hello Neighbor-стиля ключ обычно <b>не исчезает</b> после открытия (им ещё подвал открывать). Если хотите «одноразовый» — после Unlock делайте <code>Remove from Array</code>. Решите заранее, иначе игрок выбросит ключ и застрянет.</p></div></div>
+<h2 id="card">Ключ-карта и электронная дверь</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Считыватель: коробка + лампа</h4></div><p>Рядом с дверью: <code>SM_Reader (коробка 15×25×8) + Point Light маленькая красная + Static Mesh лампочки (Emissive красный материал)</code>. Всё в одном <code>BP_CardDoor</code>. Переменная <code>HasCard (bool) в игроке</code>, <code>Powered (bool) в двери</code>.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Логика считывателя</h4></div><p>E у ридера: <code>HasCard? → true: Set Powered=true → Set Light Color зелёный + Set Material лампы на зелёный Emissive → Play Sound (Beep/Open) → Play TL_Open; false: мигнуть красным (Timeline 0.2с) + Print «Нужна ключ-карта»</code>. Лампа — два материала в массиве + <code>Set Material (Element 0)</code>.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">E на Reader → Get <b>HasCard</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node branch"><b>Branch HasCard</b> → FALSE: красный blink + звук ошибки</div><div class="bp-arrow">↓ TRUE</div>
+<div class="bp-node func">Set <b>Powered=true</b> → SetLightColor <b>зелёный</b> → SetMaterial лампы → <b>PlaySound Beep</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node var"><b>Play TL_Open</b> (та же дверь)</div>
+</div></div>
+<div class="alert alert-important"><div class="ico">🔊</div><div><strong>Важно: звук</strong><p>Звук — <code>Play Sound at Location</code> (нужен Sound Cue из Kit). Громкость 1.0, Location — позиция ридера. Без звука игрок не поймёт, сработало или нет. Держите 2 Cue: success и denied.</p></div></div>
+<h2 id="boards">Доски на двери: заколоченный проход</h2>
+<p>Проход, который нельзя открыть ключом — только ломом. Состав: <code>BP_BoardedDoor: рама + 3 Static Mesh доски (каждая Movable, BlockAll) + 2 Box Collision (одна блокирует проход, вторая — триггер для лома)</code>. Переменная <code>BoardsLeft = 3</code>.</p>
+<ul><li>Каждая доска — отдельный меш со своим Pivot в центре (её будем «отрывать» со звуком и физикой).</li><li>Пока BoardsLeft &gt; 0 — основная дверь заблокирована (Branch не пускает TL_Open).</li><li>Доски чуть повёрнуты (Rotation Z ±10°) — так атмосфернее, как в оригинале.</li></ul>
+<h2 id="crowbar">Лом: берём → бьём → доска отлетает</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Подбор лома</h4></div><p><code>BP_Crowbar: Mesh + Sphere Overlap</code>. На Overlap: <code>Player.HasCrowbar = true → Attach лом к руке (AttachToComponent HandSocket) → Destroy оригинал или Hide</code>. Проверка «держит ли лом» — Bool HasCrowbar в игроке. Без него E на доске даёт «Нужен лом!».</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Какая доска? Трассировка или триггер</h4></div><p>Простой вариант: у каждой доски свой Sphere Trigger + в доске Bool <code>IsTargeted</code>. Сложный (лучше): <code>Line Trace от камеры на 250 см → Hit Actor → Cast To BP_Board → снять именно её</code>. Для первого мода хватит триггеров: подошёл к доске с ломом → E → снимается ближайшая.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Снятие доски со звуком и анимацией</h4></div><p>На E: <code>HasCrowbar? → true: BoardsLeft-- → Play Sound (Wood Crack) → Detach + Simulate Physics на 1с (доска падает) + Delay 1.0 → Destroy Actor → если BoardsLeft==0: разблокировать дверь (IsLocked=false)</code>. Анимация — просто <code>Add Impulse + Spin (SetRelativeRotation по Timeline 0.3с)</code>,этого хватает для вау-эффекта.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">E возле доски → Get <b>HasCrowbar</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node branch"><b>Branch</b> → FALSE: «Найдите лом!»</div><div class="bp-arrow">↓ TRUE</div>
+<div class="bp-node func"><b>BoardsLeft--</b> → Crack-звук → <b>Simulate Physics + Impulse</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node var"><b>Delay 1.0 → Destroy Board</b> → если 0: <b>Unlock дверь</b></div>
+</div></div>
+<h2 id="mega">Своя головоломка из 6 этапов (как в Hello Neighbor)</h2>
+<p>Финальный квест уровня:</p>
+<ol>
+<li><b>Красный ключ на кухне</b> → открывает <b>шкаф в спальне</b> (дверь с NeededID=1).</li>
+<li><b>В шкафу — лом</b> (HasCrowbar=true).</li>
+<li><b>Ломом снимаем 3 доски</b> с двери в подвал (BoardsLeft 3→0).</li>
+<li><b>За досками — ключ-карта</b> на полке (HasCard=true).</li>
+<li><b>Картой открываем электронную дверь</b> (лампа красная→зелёная).</li>
+<li><b>За ней — финал:</b> рычаг/вентиль (см. <a href="water.html">слив воды</a>) или записка «Вы выбрались!».</li>
+</ol>
+<p>Свяжите этапы через <b>GameMode или Level Blueprint</b>: Bool <code>Stage1_Key, Stage2_Crowbar…</code> + Widget-подсказки (см. <a href="day-night.html">текст на экране</a>). Тестируйте по одному этапу: закройте остальные двери заглушками, иначе не поймёте, где сломалось.</p>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: как улучшить</strong><p>Добавьте таймер (дверь закрывается через 5с), звук скрипа Timeline, «ложный» синий ключ (открывает кладовку с батарейкой), доски разного размера (2 E вместо 1). Но сначала — чтобы работала база из 6 этапов без ошибок.</p></div></div>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>Дверь открывается только рядом и только по E, через стену — нет.</li>
+<li>Без ключа — «Нужен ключ», с ключом — Unlock + анимация.</li>
+<li>Красный ключ не открывает синюю дверь (и наоборот).</li>
+<li>Карта зажигает зелёную лампу + звук, без карты — красный blink.</li>
+<li>Лом снимает все 3 доски по очереди, проход открывается.</li>
+</ul>
+<details><summary>Дверь вращается вокруг центра, а не петли</summary><p>Pivot в центре меша. Создайте Scene→DoorPivot на краю проёма, вложите полотно, вращайте Pivot. Или сдвиньте Pivot в Blender (origin to edge).</p></details>
+<details><summary>Trigger срабатывает через стену</summary><p>Уменьшите Box, перенесите его только перед дверью, добавьте проверку дистанции (Vector Length &lt; 200) или Line Trace.</p></details>
+<details><summary>Ключ подобрал, а дверь всё равно «Нужен ключ»</summary><p>HasKey стоит не в том игроке (в меню-персонаже, а не в игровом) или Cast идёт не к тому классу. Проверьте через Print String значение HasKey сразу после подбора.</p></details>
+<details><summary>Timeline дёргается / дверь телепортируется</summary><p>Длина Timeline 0 или нет Lerp. Поставьте 1.0с, 2 ключа, Update → Lerp → SetRelativeRotation. Полотно — Movable, не Static!</p></details>
+<details><summary>Звука нет</summary><p>Нет Sound Cue или громкость 0. Проверьте Play Sound at Location с тестовым Cue из Kit. Наушники/микшер — банально, но бывает.</p></details>
+<div class="pager">
+<a href="building.html"><span>← Назад</span><strong>2. Строительство дома</strong></a>
+<a href="water.html"><span>Следующий урок →</span><strong>4. Вода и акула</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

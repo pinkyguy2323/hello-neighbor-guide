@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6. Day, night & text — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🌙</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/day-night.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Day-night</div><h1>6. Day, night, timers &amp; on-screen text</h1><p>5-min auto cycle (sun Timeline + color/fog), N-key toggle, event night (“picked item → dark”), Print vs UMG Widget hints “Need red key / Press E” built from scratch. Based on ModDB Tuto #5.</p><div class="badges"><span class="badge">Medium</span><span class="badge o">Horror mood</span><span class="badge g">Widget from zero</span></div></div>
+<div class="article">
+<h2>Auto day/night</h2>
+<p>Sun + Sky to <b>Movable</b> or Timeline can't rotate them! Remember 4 pitches: day −55°, sunset −12°, night +25° (moonlight Intensity .15–.25 color #5A7BFF), dawn −30°. <code>BP_DayNight</code> Timeline 300s Loop: SunAngle keys (0=−55,120=−55,180=−12,240=+25,270=+25,300=−55). Update: <code>Set sun rotation → Lerp color/intensity by range → Sky .3 night / Fog .03 + Post Exposure .85 night vs 1.0 day</code>. Night lamps: Array or <code>Tag=NightLight</code> → <code>night? ForEach Visible+1500 : off</code> + emissive shade. Player feels “dark = hide”.</p>
+<div class="bp"><div class="bp-row"><div class="bnode ev">BeginPlay → Play TL_Day Loop</div><div class="barr">↓ Update</div><div class="bnode fn">Angle → rotation + color/intensity → lamps on/off + fog/sky</div></div></div>
+<h2>Button &amp; event + timers</h2>
+<p><b>Test key:</b> Action <code>ToggleNight (N)</code> → FlipFlop → freeze Timeline + force night/day (screenshots). <b>Gameplay:</b> pickup after <code>HasKey=true</code> → <code>Get DayNight → NightNow → Jump to 240s + “Something changed… dark”</code> (“took key — Neighbor woke”). <b>Countdown:</b> <code>Set Timer by Event 5s → close door/siren</code> — stoppable via Clear Timer unlike Delay.</p>
+<h2>Text: Print vs Widget</h2>
+<p>Print = 2-sec debug, ugly. UMG Widget + Text Block = real game UI. 3D Widget = in-world sign (heavy, 1–2 only). Build <code>W_Hint</code>: Add → User Interface → Widget Blueprint, Text Block bottom-center size 24 + shadow. Player/Level BeginPlay <b>once</b>: <code>Create Widget → Add to Viewport → save HintWidget</code>. Door Overlap: <code>HasKey? “Press E to open” : “Need red key” → Visible</code>; EndOverlap → Hidden. Type is Text not String. #1 bug: Create in Overlap = 10 stacked widgets — create once, only SetText/Visibility later.</p>
+<div class="bp"><div class="bp-row"><div class="bnode ev">Door Overlap → HasKey?</div><div class="barr">↓</div><div class="bnode fn">TRUE “Press E…” / FALSE “Need red key” → Visible → End: Hidden</div></div></div>
+<details><summary>Sun frozen / too dark-bright / text stuck?</summary><p>Movable + Loop + Update wired. Night .2 not 0, Sky .3, Exposure 1.0 day. IsValid HintWidget + single instance.</p></details>
+<div class="pager"><a href="blueprints-basic.html"><span>← Back</span><strong>5. Blueprint</strong></a><a href="custom-assets.html"><span>Next →</span><strong>7. Custom assets</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/day-night.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community mini-wiki — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">✎</div><div>HELLO NEIGHBOR<br><small>COMMUNITY WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/index.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Community</div><h1>✎ Community mini-wiki</h1><p>Post your finds — everyone sees them once hosted. Offline it stores in your browser; with free cloud keys (<code>config.js</code>) it syncs via Firebase or Supabase for all visitors.</p><div class="badges"><span class="badge g" id="cloudStatus">Mode: detecting…</span><span class="badge">localStorage + JSON + cloud</span></div></div>
+<div class="article">
+<h2>Posts</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+<input id="q" type="text" placeholder="Filter: shark, key, pink…" style="flex:2;min-width:180px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:#fff">
+<select id="fcat" style="flex:1;min-width:140px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:9px;color:#fff">
+<option value="">All categories</option><option>Puzzles</option><option>Water</option><option>Lighting</option><option>Blueprint</option><option>Models</option><option>Neighbor</option><option>General</option>
+</select>
+<button class="btn" id="exportBtn">⬇ Export JSON</button>
+<label class="btn" style="cursor:pointer">⬆ Import <input id="importFile" type="file" accept=".json" style="display:none"></label>
+</div>
+<div id="posts"><p style="color:var(--muted)">Loading…</p></div>
+<h2 style="margin-top:26px">Write a post</h2>
+<form id="postForm" class="form-grid">
+<input id="ptitle" type="text" maxlength="120" placeholder="Title — e.g. Red key ignored? Check Cast class" required>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<input id="pauthor" type="text" maxlength="40" placeholder="Nickname (optional)" style="flex:1;min-width:140px">
+<select id="pcat" style="flex:1;min-width:140px"><option>Puzzles</option><option>Water</option><option>Lighting</option><option>Blueprint</option><option>Models</option><option>Neighbor</option><option>General</option></select>
+<input id="ptags" type="text" maxlength="120" placeholder="tags, comma separated" style="flex:2;min-width:160px">
+</div>
+<textarea id="pbody" maxlength="3000" placeholder="What did you do, what happened, what fixed it? Steps + node names…" required></textarea>
+<button class="btn btn-primary" type="submit">Publish post</button>
+<p style="font-size:13px;color:var(--muted)">Local mode: saved in this browser + exportable. Cloud mode (keys in config.js + hosted): visible to everyone. No login needed for demo; add Firebase Auth / Supabase RLS for production (see Hosting page).</p>
+</form>
+<div class="pager"><a href="troubleshooting.html"><span>← Back</span><strong>Troubleshooting</strong></a><a href="hosting.html"><span>Next →</span><strong>▲ Free hosting</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • shared posts need hosting + cloud keys — see Hosting</footer>
+<button id="toTop">↑</button>
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="community.js"></script>
+</body>
+</html>

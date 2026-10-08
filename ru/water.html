@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4. Вода, акула и слив воды — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🦈</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>4. Вода, акула и механика слива воды</h1><p>Делаем бассейн с прозрачной водой, запускаем акулу-охотника на простых триггерах и собираем головоломку «вентиль → вода уходит → проход открыт». Честно разбираем, чего нет в Mod Kit из коробки и как обойти.</p><div class="badges"><span class="badge">★★ Средне</span><span class="badge orange">Хит мода: акула</span><span class="badge green">Финал: слив воды</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#water">Создание воды и бассейна</a></li>
+<li><a href="#player">Игрок в воде: 3 варианта</a></li>
+<li><a href="#shark">Акула: охотник на Trigger + MoveTo</a></li>
+<li><a href="#drain">Слив воды: вентиль + Timeline</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>Бассейн 10×6×2 м: кафельные стены, поверхность воды (полупрозрачный Plane с анимацией), объём под водой (Post Process синий), акула <code>BP_Shark</code> (патруль → погоня → атака → возврат), вентиль <code>BP_Valve</code> (вода опускается за 8 сек, акула отключается, открывается проход с ключом).</p>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: ограничения Mod Kit 4.20.3</strong><p>Готовой системы плавания (как в новых UE) и NavMesh-плавания под водой в Mod Kit нет. AI Соседа заточен под дом (BP_Area*), а не под воду. Поэтому акулу делаем <b>учебную</b>: Pawn/Actor + Trigger + MoveTo/Timeline, без полноценного pathfinding. Для мода этого достаточно и это честно работает.</p></div></div>
+<h2 id="water">Создание воды и бассейна</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Чаша бассейна</h4></div><p>Пол 1000×600×20 + 4 стены высотой 200 см (вода будет 150 см). Материал — кафель (светло-голубой, Roughness 0.3). Collision BlockAll везде. Лестница из 4 ступеней в углу. Положите на дно ящик с «сокровищем» (ключ-картой) — ради него игрок и полезет к акуле.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Поверхность: Plane + материал воды</h4></div><p>Place Actors → Basic → <code>Plane</code> 1000×600 на высоту 150 см (Z воды). Назначьте <code>M_Water</code> из Kit или создайте свой (см. ниже). В Details Plane: <code>Collision = NoCollision</code> (иначе игрок будет «стоять» на воде!), <code>Cast Shadow = false</code>, <code>Mobility = Movable</code> (будем опускать при сливе).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Материал воды за 5 минут</h4></div><p>Content Browser → Add New → Material → <code>M_MyWater</code>. В редакторе: <code>Blend Mode = Translucent, Opacity 0.5–0.7, Base Color светло-голубой, Metallic 0.1, Roughness 0.1 (отражения!), Normal — волна (Panner + NormalMap, Speed 0.05)</code>. Нода <code>Panner</code> двигает текстуру — вода «течёт». Для ряби добавьте второй Panner в другую сторону. Сохраните → назначьте на Plane.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">4</div><h4>Объём воды: Post Process под водой</h4></div><p>Добавьте <code>Post Process Volume</code> размером с чашу (Unbound=false, только внутри!). Настройки: синий Tint, Saturation 1.2, Exposure 0.9. Когда игрок внутри — экран синеет. Второй большой Post (на всю карту, Unbound=true) — обычная цветокоррекция. Не перепутайте!</p></div>
+<div class="table-wrap"><table><tr><th>Параметр воды</th><th>Что крутить</th><th>Стартовые значения</th></tr>
+<tr><td>Прозрачность</td><td>Opacity в материале</td><td>0.55 (видно дно и акулу-тень)</td></tr>
+<tr><td>Отражения</td><td>Roughness → 0.05–0.15, Metallic 0.2</td><td>Чем ниже Roughness — тем зеркальнее</td></tr>
+<tr><td>Движение</td><td>Panner Speed</td><td>0.03–0.08 (медленная волна)</td></tr>
+<tr><td>Collision поверхности</td><td>Должен быть NoCollision</td><td>Иначе баг «Иисус ходит по воде»</td></tr>
+<tr><td>Глубина</td><td>Высота Plane над дном</td><td>150 см: по грудь, страшно, но видно</td></tr>
+</table></div>
+<h2 id="player">Игрок в воде: 3 варианта</h2>
+<ul>
+<li><b>Вариант А (простой, рекомендуем): «брод».</b> Игрок просто ходит по дну (вода — визуал). Замедлите его в объёме: Trigger Volume в бассейне → <code>Set Max Walk Speed 150 (было 400)</code> на входе, вернуть 400 на выходе. Прыжки ниже. Дёшево и работает.</li>
+<li><b>Вариант Б: «плавание» через Blueprint.</b> В том же триггере включите <code>Swimming?</code>: отключите гравитацию (Gravity Scale 0.3), разрешите «лететь» (Fly Mode) пока внутри. В 4.20 Character Movement умеет Swim, но без анимаций — персонаж будет «стоять» в воде. Приемлемо для мода.</li>
+<li><b>Вариант В: честно никак.</b> Полноценного плавания с анимациями и всплытием в Mod Kit нет. Не обещайте игрокам «как в GTA». Скажите «брод с замедлением» — и это будет правдой.</li>
+</ul>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: урон воды</strong><p>Хотите страх? В триггере бассейна каждые 2с отнимайте 5 HP через <code>Apply Damage</code>, пока игрок внутри без... ничего. А после слива — урон выкл. Игрок спешит к вентилю — геймплей!</p></div></div>
+<h2 id="shark">Акула: охотник на Trigger + MoveTo</h2>
+<p>Состав <code>BP_Shark</code>: Skeletal/Static Mesh акулы (или конус-заглушка на первое время!) + <code>Sphere Collision (агро 1200 см)</code> + <code>Box (атака 150 см)</code>. Переменные: <code>PlayerInWater? (bool), SharkActive? (bool=true), HomeLocation (vector), Speed 300</code>.</p>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Патруль: туда-сюда по Timeline</h4></div><p>Timeline 6с Loop: <code>Lerp A(-400,0,0) → B(400,0,0) относительно центра бассейна → SetActorLocation + SetActorRotation по направлению</code>. Акула плавает восьмёркой, пока игрока нет. HomeLocation запомните на BeginPlay.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Обнаружение: большой триггер</h4></div><p><code>OnBeginOverlap (AgroSphere) → Cast To Player → если Player в воде И SharkActive → Set Chasing=true → Play Sound (Jaws-стиль)</code>. OnEndOverlap → Chasing=false. Не используйте AI Perception — в Mod Kit он капризный, триггера хватает.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Погоня: MoveTo без NavMesh</h4></div><p>Event Tick → <code>Branch [Chasing && SharkActive] → true: направление = PlayerLocation - SharkLocation (только X/Y, Z фиксируем на глубине!) → Lerp/ Move + SetActorLocation с Speed*DeltaTime → смотреть на игрока (Look At, только Yaw)</code>. Границы: <code>Clamp X/Y в пределах бассейна</code> — иначе акула выплывет на газон. Вариант «по-взрослому» — <code>AI MoveTo</code> с NavMesh Bounds Volume, но под водой NavMesh в 4.20 почти не работает, поэтому Tick+Clamp надёжнее.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">4</div><h4>Атака и возврат</h4></div><p>Малый Box Overlap → <code>Apply Damage 50 + отброс игрока (Launch Character) + звук укуса + Delay 2с (кулдаун)</code>. Если игрок вышел из воды (EndOverlap большого триггера ИЛИ Player.Z &gt; уровня воды): <code>Chasing=false → Timeline возврата к HomeLocation → resume патруль</code>.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">Tick → <b>Branch [Chasing && SharkActive && !WaterDrained]</b></div><div class="bp-arrow">↓ true</div>
+<div class="bp-node func">Dir = Player − Shark (Z=0) → <b>Normalize → × Speed × DeltaTime</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node var"><b>SetActorLocation (Clamped)</b> + <b>SetActorRotation (LookAt Yaw)</b></div><div class="bp-arrow">↓ рядом?</div>
+<div class="bp-node branch">Overlap малого Box → <b>Apply Damage + Launch + Cooldown 2с</b></div>
+</div></div>
+<div class="alert alert-warn"><div class="ico">⚠️</div><div><strong>Не выходит за пределы воды!</strong><p>После каждого SetActorLocation делайте Clamp: X в [-450,450], Y в [-250,250] (под ваш бассейн). Иначе при лаге акула окажется в доме. Z — константа глубины (дно +80 см).</p></div></div>
+<h2 id="drain">Слив воды: вентиль + Timeline</h2>
+<p>Головоломка: игрок крутит вентиль на бортике → вода уходит за 8 сек → акула «задыхается» (отключается) → проход на дне открывается. Переменные: <code>WaterLevel (float 1.0→0.0), WaterDrained (bool)</code>.</p>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Вентиль BP_Valve</h4></div><p>Mesh вентиля (тор) + Sphere Trigger. На E: <code>Branch [WaterDrained? уже слита?] → false: Play TL_Drain (8с) + звук скрипа/воды + вращение ручки (SetRelativeRotation 0→720° по тому же Timeline)</code>. Do Once — чтобы не сливать дважды.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Timeline слива: опускаем воду</h4></div><p>TL_Drain: Float 1→0 за 8с. Update: <code>WaterLevel = Lerp → WaterPlane.SetActorLocation (Z = дно + WaterLevel*150см) → WaterPlane.Set Scalar Opacity (прозрачнее по мере слива) → если WaterLevel&lt;0.05: WaterDrained=true</code>. Параллельно опускайте и Post Process Volume (или отключите его в конце: Set Enabled=false).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Отключаем акулу и открываем проход</h4></div><p>На WaterDrained=true (Event Dispatcher или прямая ссылка): <code>Shark.SharkActive=false + Chasing=false → Play анимация «бьётся на суше» (Rotate Z ±20° быстро 2с) → затем Stop → открыть Collision прохода на дне (Set Collision NoCollision + сдвинуть крышку) → показать ключ</code>. Добавьте Print «Вода слита! Акула больше не опасна.»</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">E на Valve → <b>DoOnce → Play TL_Drain (8с)</b></div><div class="bp-arrow">↓ Update каждый кадр</div>
+<div class="bp-node func"><b>WaterLevel 1→0</b> → Set Water <b>Z + Opacity</b></div><div class="bp-arrow">↓ Finished</div>
+<div class="bp-node var">Set <b>WaterDrained=true</b> → <b>SharkActive=false</b> → открыть <b>Collision прохода</b></div>
+</div></div>
+<button class="btn bp-toggle" data-bp-toggle="bpw">Показать разбор нод ▼</button>
+<div id="bpw" style="display:none">
+<div class="bp-detail"><b>SetActorLocation для воды</b> — двигаем именно Plane, а не весь бассейн! Z = Lerp(дно, верх, WaterLevel). Не забудьте Movable у Plane.</div>
+<div class="bp-detail"><b>Set Collision Enabled</b> — у крышки прохода переключаем BlockAll → NoCollision. Игрок проваливается вниз за наградой. Обратно — не надо, это финал.</div>
+<div class="bp-detail"><b>WaterDrained</b> — главный флаг уровня. Его же читают акула (не гоняться), урон воды (не тикать), Widget (сменить подсказку).</div>
+</div>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>Play: вода полупрозрачная, видно дно, под водой синий экран.</li>
+<li>Зашли в бассейн — скорость упала, акула поплыла к вам.</li>
+<li>Вышли — акула вернулась в центр, не выплыла на траву.</li>
+<li>Покрутили вентиль — вода ушла за ~8с, акула замерла, проход открылся.</li>
+<li>Повторный E на вентиль ничего не ломает (DoOnce).</li>
+</ul>
+<details><summary>Хожу по воде как по полу</summary><p>У Plane стоит BlockAll. Поставьте NoCollision. Проверьте и у Post Process — у него вообще не должно быть Collision.</p></details>
+<details><summary>Акула вылетает из бассейна / в небо</summary><p>Не зафиксировали Z и нет Clamp. Z = константа, X/Y через Clamp под размер бассейна. В Tick умножайте на DeltaTime, иначе скорость зависит от FPS.</p></details>
+<details><summary>Вода не опускается</summary><p>Plane — Static (должен быть Movable) или Timeline не Play, а Reverse. Проверьте Update-пин соединён с SetActorLocation.</p></details>
+<details><summary>Акула продолжает бить после слива</summary><p>Не проверяете WaterDrained в Tick. Добавьте Branch [NOT WaterDrained] перед погоней и SharkActive=false в финале слива.</p></details>
+<div class="pager">
+<a href="puzzles.html"><span>← Назад</span><strong>3. Головоломки</strong></a>
+<a href="blueprints-basic.html"><span>Следующий урок →</span><strong>5. Blueprint: основы</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

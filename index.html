@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hello Neighbor Mod Kit — Master Guide (EN)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🏠</div><div>HELLO NEIGHBOR<br><small>MOD KIT • MASTER GUIDE</small></div></div>
+<nav class="topnav">
+<a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a>
+</nav>
+<div class="top-actions">
+<a class="lang" href="ru/index.html" title="Русская версия">RU 🇷🇺</a>
+<button class="btn" id="themeToggle">☀️ Light</button>
+<button class="btn burger" id="burger">☰ Menu</button>
+</div></div>
+</header>
+<div class="wrap">
+<aside class="side">
+<h3>Guide navigation</h3>
+<div class="search"><input id="siteSearch" type="text" placeholder="Search: key, light, shark…"></div>
+<div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home — landing</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building a house</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community wiki</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Free hosting</a></li>
+</ul></nav>
+<div class="pill" id="progressBadge" style="margin:8px 4px;display:inline-block">Visited: 0 / 13</div>
+<div class="pill" style="margin:4px;display:inline-block">Mod Kit = UE 4.20.3 • Steam + ModDB + Wiki verified</div>
+</aside>
+<main class="main">
+<section class="hero-cine reveal in">
+<div class="orb orb1"></div><div class="orb orb2"></div>
+<div class="hero-kicker">🏚️ Raven Brooks • Unreal Engine 4.20.3 • Mod Kit Master Guide</div>
+<h1>Build your own <span>Neighbor house</span>, puzzles &amp; shark pool.</h1>
+<p class="hero-sub">A step-by-step English knowledge base for first-time modders: from an empty level to keys, keycards, boards &amp; crowbar, water with a shark, day/night, custom FBX and replacing the Neighbor — plus a <b>community mini-wiki</b> where posts can be shared with everyone when hosted.</p>
+<div class="hero-cta">
+<a class="btn btn-primary" href="basics.html">📘 Start the wiki →</a>
+<a class="btn btn-orange" href="community.html">✎ Community posts</a>
+<a class="btn btn-ghost" href="hosting.html">▲ Host it free</a>
+<a class="btn btn-ghost" href="ru/index.html">🇷🇺 Русская версия</a>
+</div>
+<div class="hero-stats">
+<div class="stat"><b>13</b><span>pages • landing + 10 guides + community + hosting</span></div>
+<div class="stat"><b>UE 4.20.3</b><span>real Mod Kit version, not UE5</span></div>
+<div class="stat"><b>~40</b><span>blueprint schemas with node breakdowns</span></div>
+<div class="stat"><b>Free</b><span>works offline, shared mode when hosted</span></div>
+</div>
+</section>
+
+<div class="grid" style="margin-top:16px">
+<div class="card reveal"><h3>🗺️ What you will build</h3><p>Level with sky &amp; landscape → 2-floor house → key doors → electronic lock → boards + crowbar → pool with shark + drain valve → day/night + hints → TV + generator → custom Neighbor.</p><div class="meta"><span class="diff e">Beginner → Pro</span><span class="pill">7 evenings path</span></div></div>
+<div class="card reveal"><h3>📦 What you need</h3><p>Epic Launcher + Hello Neighbor Mod Kit (~13 GB), Hello Neighbor on Steam for Workshop upload, Windows 10/11, mouse with wheel. New Plugin per mod: <code>Edit → Plugins → New Plugin</code>.</p><div class="meta"><span class="pill">No server needed</span><span class="pill">Alt+P to playtest</span></div></div>
+<div class="card reveal"><h3>✎ Mini-wiki with servers</h3><p>Community page stores posts in <code>localStorage</code> offline, exports/imports JSON, and syncs to <b>Firebase Firestore</b> or <b>Supabase</b> free tier when you paste keys into <code>config.js</code>. Host free — posts become visible to everyone.</p><a href="community.html">Open community →</a></div>
+</div>
+
+<div class="article reveal" style="margin-top:16px">
+<h2>🗂️ Wiki map — all lessons</h2>
+<p>Clean-reader wiki inside, cinematic landing outside. Every guide has: goal, required objects, numbered steps, blueprint schema + per-node explanation, check-list, 3–5 errors, upgrade ideas.</p>
+<div class="grid">
+<div class="card"><h3><a href="basics.html">1. Map basics: sky, light, landscape</a></h3><div class="meta"><span class="diff e">Easy</span><span class="pill">45 min</span></div><p>Empty level, Viewport/WASD, Directional + Sky + Atmosphere + Fog + Post, Static/Stationary/Movable, Build Lighting, hill/road/pit/platform. NEW: exposure table, Lightmass deep-dive.</p><a href="basics.html">Open →</a></div>
+<div class="card"><h3><a href="building.html">2. Building a house</a></h3><div class="meta"><span class="diff e">Easy</span><span class="pill">60 min</span></div><p>Static Mesh search, Transform/Snap, Collision/Material/Mobility/LOD, 12-step 2-floor house, Kit vs scratch, Pivot gaps fix. NEW: measurements cheat-sheet.</p><a href="building.html">Open →</a></div>
+<div class="card"><h3><a href="puzzles.html">3. Puzzles: doors, keys, boards</a></h3><div class="meta"><span class="diff m">Medium</span><span class="pill">90 min</span></div><p>Timeline door, HasKey/IsLocked booleans, red/blue/green IDs + Enum, keycard reader with lamp, 3 boards + crowbar, 6-stage quest. NEW: interface-based E for all.</p><a href="puzzles.html">Open →</a></div>
+<div class="card"><h3><a href="water.html">4. Water, shark &amp; drain</a></h3><div class="meta"><span class="diff m">Medium</span><span class="pill">60 min</span></div><p>Translucent water material with Panner, pool Post volume, wading vs swimming, Trigger shark with Clamp, 8-sec valve drain + WaterDrained. NEW: damage-over-time water.</p><a href="water.html">Open →</a></div>
+<div class="card"><h3><a href="blueprints-basic.html">5. Blueprint for beginners</a></h3><div class="meta"><span class="diff e">Easy</span><span class="pill">70 min</span></div><p>Actor/Component/Event/Variable, wire colors, 16 nodes with mistakes, magic cube practice (jump → 2s → home). NEW: white-wire first rule.</p><a href="blueprints-basic.html">Open →</a></div>
+<div class="card"><h3><a href="day-night.html">6. Day, night &amp; text</a></h3><div class="meta"><span class="diff m">Medium</span><span class="pill">50 min</span></div><p>300s Timeline sun, 3 night modes, N-key toggle, event-based night, Print vs UMG Widget hints from scratch. NEW: exposure night presets.</p><a href="day-night.html">Open →</a></div>
+<div class="card"><h3><a href="custom-assets.html">7. Custom models &amp; BP props</a></h3><div class="meta"><span class="diff h">Hard</span><span class="pill">80 min</span></div><p>Blender scale/Pivot/UV, FBX 2014-18 import, 6 texture maps, emissive screen material, Simple/Complex/UCX collision, TV with Dynamic Instance. NEW: pink-material flowchart.</p><a href="custom-assets.html">Open →</a></div>
+<div class="card"><h3><a href="blueprints-advanced.html">8. Advanced Blueprint</a></h3><div class="meta"><span class="diff h">Hard</span><span class="pill">90 min</span></div><p>Direct/Cast/Interface/Dispatcher, Functions, Arrays/Struct/Enum door states, SaveGame honesty, generator→switch→lamps→electro-door. NEW: architecture diagram.</p><a href="blueprints-advanced.html">Open →</a></div>
+<div class="card"><h3><a href="custom-neighbor.html">9. Replace the Neighbor</a></h3><div class="meta"><span class="diff h">Pro</span><span class="pill">40 min</span></div><p>Skeletal/Skeleton/Rig, child BP, same-skeleton swap, 10 safe steps, Area zones, 6 T-Pose diagnoses. NEW: NeighborModKit shortcut.</p><a href="custom-neighbor.html">Open →</a></div>
+<div class="card"><h3><a href="troubleshooting.html">10. Troubleshooting bible</a></h3><div class="meta"><span class="diff e">Reference</span><span class="pill">17 fixes</span></div><p>Invisible, fall-through, Accessed None, Cast Failed, Infinite Loop, dark build, pink, T-Pose, FPS — cause → 1-min diagnosis → fix. NEW: pre-package checklist.</p><a href="troubleshooting.html">Open →</a></div>
+<div class="card"><h3><a href="community.html">✎ Community mini-wiki</a></h3><div class="meta"><span class="diff e">Live</span><span class="pill">shared</span></div><p>Post your finds: title, category, tags, body. Local instantly, shared when hosted + cloud keys. Like, search, filter, export/import JSON.</p><a href="community.html">Post something →</a></div>
+<div class="card"><h3><a href="hosting.html">▲ Host it free</a></h3><div class="meta"><span class="diff e">Guide</span><span class="pill">5 min</span></div><p>GitHub Pages, Netlify Drop, Vercel, Cloudflare Pages, Itch.io — step-by-step + Firebase/Supabase free setup so posts are visible to everyone.</p><a href="hosting.html">Deploy →</a></div>
+</div>
+
+<h2>⚠️ Version honesty (Mod Kit vs UE5)</h2>
+<div class="tablewrap"><table>
+<tr><th>Feature</th><th>Mod Kit (UE 4.20.3) — use this</th><th>Modern UE5 tutorials — do NOT copy blindly</th></tr>
+<tr><td>Sky</td><td><code>Directional + Sky Light + Sky Atmosphere + Exponential Height Fog</code>. Early kits had <code>Atmospheric Fog</code> instead — same idea.</td><td>Lumen, Volumetric Clouds. You don't have them.</td></tr>
+<tr><td>Lighting</td><td><code>Static / Stationary / Movable</code> + mandatory <code>Build Lighting</code> + Lightmass Volume.</td><td>Lumen often skips bake. You must bake.</td></tr>
+<tr><td>Input</td><td><code>Project Settings → Input → Action Mappings (E)</code>.</td><td>Enhanced Input. Not in your kit.</td></tr>
+<tr><td>Neighbor AI</td><td><code>BP_AreaNeighborHouse / BP_AreaPlayerHouse / BP_GeneralSwitch</code> auto-detected.</td><td>Build from scratch. You are lucky.</td></tr>
+<tr><td>Models</td><td><code>FBX 2014–2018</code>, <code>TGA/PNG</code>, no Nanite.</td><td>Nanite, glTF. Stick to FBX.</td></tr>
+</table></div>
+
+<h2>🛤️ 7-evening path</h2>
+<div class="timeline">
+<div class="tstep"><div class="tdot">1</div><div><b>Evening 1:</b> basics — empty map + sun + hill. Press Play and run.</div></div>
+<div class="tstep"><div class="tdot">2</div><div><b>Evening 2:</b> building — 4×4 room + 2nd floor. Collision check.</div></div>
+<div class="tstep"><div class="tdot">3</div><div><b>Evening 3:</b> blueprint basics — magic cube. Branch + Timeline click.</div></div>
+<div class="tstep"><div class="tdot">4</div><div><b>Evening 4:</b> puzzles — key door + boards &amp; crowbar. The core.</div></div>
+<div class="tstep"><div class="tdot">5</div><div><b>Evening 5:</b> water + day/night — shark pool + 5-min cycle.</div></div>
+<div class="tstep"><div class="tdot">6</div><div><b>Evening 6:</b> assets + advanced — TV + generator grid.</div></div>
+<div class="tstep"><div class="tdot">7</div><div><b>Evening 7:</b> Neighbor swap + Workshop package. Publish!</div></div>
+</div>
+
+<h2>❓ FAQ</h2>
+<details open><summary>Where are the Neighbor house props? I don't want to model yet</summary><p>Content Browser → search <code>SM_Wall, BP_Door, BP_Key, BP_NeighborCharacter, BP_Area*</code> inside the kit content. Drag to level. Model from scratch only in lesson 7.</p></details>
+<details><summary>Everything pink / black. What now?</summary><p>Pink = missing material (reassign, see troubleshooting). Black after Build = no Lightmass Volume or Static without bake. Add volume, rebuild on Preview.</p></details>
+<details><summary>How do shared community posts work?</summary><p>Locally: posts live in your browser (localStorage). Hosted + cloud keys in <code>config.js</code>: posts live in Firebase/Supabase and everyone sees the same list. See <a href="hosting.html">hosting guide</a>.</p></details>
+<details><summary>Sources?</summary><p>Unreal Engine Blog (Mod Kit release, Oct 2017), ModDB Hello Neighbor Modding Guide + Tuto #2–#6, Hello Neighbor Wiki (Hello Mod Kit: UE 4.20.3), Steam install guide. No invented nodes — version differences marked.</p></details>
+<div class="pager">
+<a href="basics.html"><span>Start learning →</span><strong>1. Map basics: sky, light, landscape</strong></a>
+<a href="community.html"><span>Share knowledge</span><strong>✎ Community mini-wiki</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Fan knowledge base. Hello Neighbor © tinyBuild / Dynamic Pixels • Unreal Engine © Epic Games • EN v2 landing + wiki • RU version: <a href="ru/index.html">hello-neighbor-guide</a></footer>
+<button id="toTop" title="Top">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

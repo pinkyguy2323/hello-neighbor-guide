@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host it free — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">▲</div><div>HELLO NEIGHBOR<br><small>FREE HOSTING</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/index.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Hosting</div><h1>▲ Host it free so posts are shared</h1><p>Static files work by double-click. Shared community needs a URL + optional free database. 5 free ways below, cheapest first.</p><div class="badges"><span class="badge g">100% free tiers</span><span class="badge">No credit card</span></div></div>
+<div class="article">
+<h2>1. Fastest: Netlify Drop / Itch.io (2 min, local posts only)</h2>
+<p>Zip <code>hello-neighbor-guide-en</code> → drop at <code>app.netlify.com/drop</code> → you get <code>https://xxx.netlify.app</code>. Or itch.io → New Project → HTML → upload zip + tick “mobile friendly”. Everyone sees the guide; community posts stay per-browser (localStorage) + shareable via Export/Import JSON. Zero config, perfect for school/friends.</p>
+<h2>2. GitHub Pages (free forever, recommended)</h2>
+<pre>1. github.com → New repo hn-guide → Upload hello-neighbor-guide-en/* 
+2. Settings → Pages → Deploy from branch → main / root
+3. Open https://USERNAME.github.io/hn-guide/
+# Custom domain optional. Update = drag new files.</pre>
+<h2>3. Vercel / Cloudflare Pages (free, fast)</h2>
+<p>Vercel: <code>vercel.com → Add New → upload folder → Deploy</code>. Cloudflare: <code>dash.cloudflare.com → Pages → Upload assets → Deploy</code>. Both give HTTPS + preview URLs. Same as above: shared guide, local posts.</p>
+<h2>4. Shared posts for everyone: Firebase Firestore (free Spark)</h2>
+<pre>1. console.firebase.google.com → New project (no billing) → Build → Firestore → Create (test mode for demo!)
+2. Copy web config → paste into config.js → firebase: {apiKey, authDomain, projectId, appId}
+3. Collection hn_posts auto-created on first post. Rules for demo:
+   allow read: if true; allow write: if true;
+   # Production: add Auth + validation! Free quota ~50k reads/day — enough for a class.
+4. Redeploy static files. Community page status turns “Mode: firebase (shared)”.</pre>
+<div class="alert ai"><div>⚠️</div><div><strong>Security note</strong><p>Open rules = anyone can write. Fine for friends/class demo. For public: enable Anonymous Auth + rule “request.auth != null + title.size() &lt; 200” and add abuse report button.</p></div></div>
+<h2>5. Alternative: Supabase Postgres (free, open-source)</h2>
+<pre>1. supabase.com → New project (free) → SQL → create table:
+   create table hn_posts (id bigint generated always as identity primary key,
+     title text, author text, cat text, tags text, body text, created bigint, likes int);
+   alter table hn_posts enable row level security;
+   create policy "open" on hn_posts for all using (true) with check (true);
+2. Project Settings → API → copy URL + anonKey → config.js → supabase: {url, anonKey, table:"hn_posts"}
+3. Redeploy. Status: “Mode: supabase (shared)”.</pre>
+<h2>Which to pick?</h2>
+<div class="tablewrap"><table><tr><th>Need</th><th>Pick</th></tr><tr><td>Just show guide to friends</td><td>Netlify Drop / GitHub Pages, no DB</td></tr><tr><td>Class posts shared, minimal setup</td><td>GitHub Pages + Firebase (easiest rules)</td></tr><tr><td>SQL + later auth/moderation</td><td>Supabase</td></tr><tr><td>Offline USB stick</td><td>Double-click index.html — community = local</td></tr></table></div>
+<div class="pager"><a href="community.html"><span>← Back</span><strong>✎ Community</strong></a><a href="index.html"><span>Home →</span><strong>Landing</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • free tiers change — check provider docs</footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

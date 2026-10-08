@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6. День, ночь, таймеры и текст — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🌙</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>6. День, ночь, таймеры и текст на экране</h1><p>Делаем живые сутки: солнце вращается по Timeline, меняются цвет и туман, ночью зажигаются фонари. Плюс 3 способа показать текст: отладочный Print, красивый Widget и подсказки «Нужен красный ключ / Нажмите E».</p><div class="badges"><span class="badge">★★ Средне</span><span class="badge orange">Атмосфера хоррора</span><span class="badge green">Widget с нуля</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#auto">Автоматическая смена дня и ночи</a></li>
+<li><a href="#btn">Переключение кнопкой и по событию</a></li>
+<li><a href="#text">Текст: Print vs Widget</a></li>
+<li><a href="#widget">Создаём Widget-подсказку с нуля</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p><code>BP_DayNight</code>: полный цикл 5 минут (день 2 мин → закат 1 мин → ночь 1.5 мин → рассвет 0.5 мин). Ночью включаются Point Light фонари. Подсказки: у закрытой двери — «Нужен красный ключ», с ключом — «Нажмите E». Основано на ModDB-туто #5 «Dynamic Day Night Cycle».</p>
+<h2 id="auto">Автоматическая смена дня и ночи</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Готовим солнце к вращению</h4></div><p>Directional Light → Mobility <b>Movable</b> (иначе Timeline не покрутит!). Sky Light — тоже Movable. Запомните 4 поворота (Rotation Y/Pitch): день -55°, закат -12°, ночь +25° (солнце под горизонтом, светит «луна» — уменьшим Intensity), рассвет -30°. Цвет: день #FFF3E0, закат #FF7A2F, ночь #5A7BFF.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Timeline суток 300 сек</h4></div><p>В BP_DayNight: Timeline TL_Day, Loop=true, длина 300. Float-трек SunAngle: ключи (0с=-55, 120с=-55, 180с=-12, 240с=+25, 270с=+25, 300с=-55). Второй трек LightColor? Проще: в Update делайте <code>Lerp цвета по SunAngle через 3 Branch-диапазона + Set Light Color / Intensity + Set Sky Intensity + Set Fog Density</code>. Ночью Intensity солнца 0.15–0.25, Sky 0.3, Fog 0.03.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Ночные фонари</h4></div><p>Все уличные Point/Spot соберите в Array (см. <a href="blueprints-advanced.html">массивы</a>) или тегните <code>Tag=NightLight</code>. В Update: <code>если SunAngle &gt; 0 (ночь) → ForEach → Set Visibility true + Set Intensity 1500, иначе false</code>. Днём фонари выкл — экономим FPS. Добавьте Emissive-материал плафона (днём серый, ночью светится) — см. телевизор в <a href="custom-assets.html">уроке 7</a>.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">BeginPlay → <b>Play TL_Day (Loop)</b></div><div class="bp-arrow">↓ Update каждый кадр</div>
+<div class="bp-node func">SunAngle → <b>Set Directional Rotation</b> → <b>Lerp Color/Intensity</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node var">Если ночь → <b>вкл NightLight[]</b>, иначе выкл + <b>Set Fog/Sky</b></div>
+</div></div>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: туман и Post ночью</strong><p>Ночью поднимите Fog до 0.04 и затемните Post Exposure до 0.85 — хоррор как в оригинале. Днём верните 0.012 / 1.0. Игрок физически почувствует «темнеет — пора прятаться».</p></div></div>
+<h2 id="btn">Переключение кнопкой и по событию</h2>
+<ul>
+<li><b>Кнопкой (тест):</b> Action Mapping <code>ToggleNight (клавиша N)</code> → FlipFlop → A: остановить Timeline + поставить ночь (Set Rotation/Color вручную), B: вернуть день. Удобно для скриншотов.</li>
+<li><b>По событию (геймплей):</b> подобрал предмет → наступила ночь. В BP_Pickup после <code>HasKey=true</code> вызовите <code>Get BP_DayNight → Set NightNow=true → Timeline Jump to 240с</code>. + Print «Что-то изменилось… стало темно». Такой приём держит напряжение: «взял ключ — сосед проснулся».</li>
+<li><b>Таймер обратного отсчёта:</b> <code>Set Timer by Event (5с) → закрыть дверь / включить сирену</code>. Не путайте с Delay: Timer можно остановить (Clear Timer), Delay — нет.</li>
+</ul>
+<h2 id="text">Текст: Print vs Widget</h2>
+<div class="table-wrap"><table><tr><th>Способ</th><th>Как</th><th>Плюсы</th><th>Минусы</th></tr>
+<tr><td><code>Print String</code></td><td>Нода с текстом, Duration 3с</td><td>2 секунды — и готово, идеальна для отладки</td><td>Уродливо, только для разработчика</td></tr>
+<tr><td><code>UMG Widget + Text Block</code></td><td>Виджет на экране с красивым шрифтом</td><td>Как в настоящей игре, можно кнопки/картинки</td><td>Нужно создать Widget Blueprint</td></tr>
+<tr><td><code>3D Widget над дверью</code></td><td>Widget Component на двери</td><td>Текст «в мире», видно издалека</td><td>Тяжелее, для 1–2 подсказок</td></tr>
+</table></div>
+<h2 id="widget">Создаём Widget-подсказку с нуля</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Widget Blueprint</h4></div><p>Content Browser → Add New → User Interface → Widget Blueprint → <code>W_Hint</code>. Откройте Designer: перетащите <code>Text Block</code> вниз по центру, имя HintText, текст «…», размер 24, тень (Shadow), цвет белый. Якорь — низ-центр. Сохраните.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Показываем игроку</h4></div><p>В PlayerCharacter или Level Blueprint на BeginPlay: <code>Create Widget (W_Hint) → Add to Viewport → сохранить в переменную HintWidget (чтобы менять текст)</code>. Создаём один раз! Дальше только меняем текст и видимость.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Меняем текст у двери</h4></div><p>В BP_Door на Overlap: <code>Get HintWidget → Set HintText: если HasKey → «Нажмите E, чтобы открыть дверь», иначе → «Нужен красный ключ» → Set Visibility Visible</code>. На EndOverlap: <code>Set Visibility Hidden</code>. После открытия: <code>Hidden</code>. Текст — именно <code>Text</code>, а не String (иначе ругается на локаль).</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">BeginOverlap двери → Get <b>HasKey</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node func">TRUE: SetText <b>«Нажмите E…»</b> | FALSE: SetText <b>«Нужен красный ключ»</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node var">Set <b>Visibility Visible</b> → EndOverlap: <b>Hidden</b></div>
+</div></div>
+<div class="alert alert-error"><div class="ico">⛔</div><div><strong>Частая ошибка: 10 виджетов друг на друге</strong><p>Create Widget в Overlap (каждый вход — новый виджет). Создавайте один раз на BeginPlay, в Overlap только SetText/Visibility. Проверьте: в игре должен быть 1 W_Hint в списке виджетов.</p></div></div>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>За 5 минут солнце проходит день→закат→ночь→рассвет без рывков.</li>
+<li>Ночью фонари горят, днём — нет. Тени не квадратные (Movable!).</li>
+<li>У двери без ключа — «Нужен красный ключ», с ключом — «Нажмите E».</li>
+<li>N включает ночь принудительно, подбор артефакта — тоже.</li>
+</ul>
+<details><summary>Солнце не вращается</summary><p>Mobility Static вместо Movable или Timeline не Loop / не Play. Проверьте Update → SetRelativeRotation соединён.</p></details>
+<details><summary>Ночью слишком темно / днём пересвет</summary><p>Ночь: Intensity 0.2, а не 0. Sky 0.3 не 0. День: Exposure 1.0, Directional не 10. Крутите по одному параметру за раз.</p></details>
+<details><summary>Текст не меняется</summary><p>HintWidget пустой (Create не вызван) или SetText идёт в другой виджет. Проверьте IsValid на HintWidget + Print перед SetText.</p></details>
+<div class="pager">
+<a href="blueprints-basic.html"><span>← Назад</span><strong>5. Blueprint: основы</strong></a>
+<a href="custom-assets.html"><span>Следующий урок →</span><strong>7. Свои модели</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

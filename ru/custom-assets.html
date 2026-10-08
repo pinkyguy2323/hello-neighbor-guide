@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7. Свои 3D-модели и Blueprint-объекты — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">📦</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>7. Свои 3D-модели и Blueprint-объекты</h1><p>Импортируем FBX из Blender, разбираем текстуры и материалы, чиним Collision и делаем интерактивный телевизор (вкл/выкл, звук, светящийся экран). После — второй пример на выбор.</p><div class="badges"><span class="badge">★★★ Сложно</span><span class="badge orange">Blender → UE 4.20</span><span class="badge green">Практика: телевизор</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#prep">Подготовка модели: масштаб, Pivot, UV</a></li>
+<li><a href="#import">Импорт FBX в Mod Kit</a></li>
+<li><a href="#tex">Текстуры: 6 карт</a></li>
+<li><a href="#mat">Свой Material с нуля</a></li>
+<li><a href="#col">Collision: почему проходят сквозь</a></li>
+<li><a href="#tv">Практика: телевизор + ещё пример</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>Возьмём простую модель телевизора (корпус + экран отдельно), импортируем в <code>Plugins/ВашМод/Content/Meshes/</code>, создадим материал с выключающимся экраном и Blueprint <code>BP_TV</code>: E включает (звук шипения + Emissive + Point Light), повторное E выключает.</p>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: форматы для UE 4.20.3</strong><p>Модели — <code>FBX 2014–2018 (бинарный), триангулированные</code>. Не используйте glTF/USD — 4.20 их не знает. Текстуры — <code>TGA/PNG 1024–2048</code>, Normal в формате DirectX (не OpenGL, иначе швы). Скелетные меши — только FBX с bones (см. <a href="custom-neighbor.html">замену соседа</a>).</p></div></div>
+<h2 id="prep">Подготовка модели: масштаб, Pivot, UV</h2>
+<ul>
+<li><b>Масштаб:</b> 1 unit Blender = 1 см UE. Телевизор 60×40×40 см. В Blender: Apply Scale (Ctrl+A → Scale), иначе в UE Scale 0.01 и физика сходит с ума. Проверка: куб 100 см должен быть по пояс персонажу (рост ~180).</li>
+<li><b>Pivot:</b> origin в центре основания (низ телевизора). Тогда он встанет на стол ровно, а не «утонет». В Blender: Origin to Bottom.</li>
+<li><b>UV:</b> у каждого меша должна быть развёртка 0–1 без наложений. Вторая UV (Lightmap) для Static — UE сгенерирует сам (Generate Lightmap UVs при импорте), но первая обязана быть чистой, иначе «пятна» после Build.</li>
+<li><b>Материалы:</b> в Blender 2 материала: M_Body (пластик) и M_Screen (экран). Экран — отдельным мешем/полигоном, иначе не переключим Emissive!</li>
+<li><b>Имена:</b> только латиница: <code>SM_TV_Body, T_TV_Screen_BC</code>. Русские буквы = розовый материал при упаковке.</li>
+</ul>
+<h2 id="import">Импорт FBX в Mod Kit</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Экспорт из Blender</h4></div><p>File → Export → FBX: Scale 1.0, Apply Unit, Forward -Z Forward / Up Y Up, Selected Objects only, Mesh + Materials. Версия FBX 7.4 (2014+). Сохраните рядом текстуры PNG.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Import в Content Browser</h4></div><p>В папке плагина <code>Content/Meshes</code> → Import → выберите FBX. Галочки: <code>Import Materials=false (создадим сами!), Import Textures=false (импортируем отдельно!), Auto Generate Collision=true, Generate Lightmap UVs=true</code>. Почему без материалов? Авто-материалы из Blender дают розовые слоты — лучше назначить свои.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Текстуры отдельно</h4></div><p>Import PNG/TGA в <code>Content/Textures</code>. В каждой: <code>Compression: BaseColor → Default (sRGB on), Normal → Normalmap (sRGB off!), Roughness/Metallic → Masks (sRGB off!)</code>. Ошибка sRGB у Normal = «пупырчатая» модель.</p></div>
+<h2 id="tex">Текстуры: 6 карт простыми словами</h2>
+<div class="table-wrap"><table><tr><th>Карта</th><th>Что хранит</th><th>Пример для ТВ</th></tr>
+<tr><td><code>Base Color</code></td><td>Цвет без света</td><td>Тёмно-серый пластик, картинка на экране</td></tr>
+<tr><td><code>Normal Map</code></td><td>Рельеф (царапины, кнопки)</td><td>Фиолетовая картинка — не пугайтесь</td></tr>
+<tr><td><code>Roughness</code></td><td>Матовость (белый=матовый, чёрный=глянец)</td><td>Корпус 0.6, экран 0.15</td></tr>
+<tr><td><code>Metallic</code></td><td>Металл (1) или нет (0)</td><td>Пластик 0, кнопки-хром 1</td></tr>
+<tr><td><code>Emissive</code></td><td>Свечение само по себе</td><td>Экран вкл — бело-голубой, выкл — чёрный</td></tr>
+<tr><td><code>Opacity</code></td><td>Прозрачность</td><td>Для ТВ не нужна; для стекла — 0.3</td></tr>
+</table></div>
+<h2 id="mat">Свой Material с нуля</h2>
+<div class="step"><div class="step-head"><div class="step-num">★</div><h4>M_TV_Screen: экран, что гаснет</h4></div><p>Add New → Material → <code>M_TV_Screen</code>. Перетащите текстуру экрана в граф → соедините в <code>Base Color</code>. Добавьте <code>Scalar Parameter ScreenOn (1.0)</code> → <code>Multiply на Emissive Color</code> → в <code>Emissive</code>. Roughness 0.15 константой. Сохраните. Теперь Blueprint будет крутить ScreenOn 1↔0 — экран гаснет без смены материала! Для корпуса — <code>M_TV_Body</code>: BaseColor + Roughness 0.6, Metallic 0.0.</p></div>
+<p><b>Розовый материал?</b> Значит слот пустой или текстура не найдена (переместили .uasset проводником). Назначьте материал в Static Mesh → Materials → Element 0/1 → Save.</p>
+<h2 id="col">Collision: почему проходят сквозь</h2>
+<ul>
+<li><b>Simple</b> — коробка вокруг (быстро). Для ТВ, стен, мебели. Создать: открыть меш → Collision → Add Box Simplified → Save.</li>
+<li><b>Complex</b> — точно по треугольникам (медленно). Только для статуй, где важна каждая выемка. В Details меша: Collision Complexity → Use Complex as Simple (осторожно с FPS!).</li>
+<li><b>Свой UCX_</b> — в Blender делаете бокс UCX_TV_01, экспортируете вместе. Для точных проёмов.</li>
+<li><b>Диагностика:</b> в Viewport Show → Collision (красные каркасы). Нет каркаса = NoCollision = провал. В Details меша Collision Preset должен быть BlockAll.</li>
+</ul>
+<h2 id="tv">Практика: телевизор + ещё пример</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>BP_TV: компоненты</h4></div><p>Blueprint Actor → <code>BP_TV</code>: <code>SM_TV_Body (Static, BlockAll) + SM_TV_Screen (Static, NoCollision — чтобы не мешал) + Point Light (выкл, Intensity 800, Radius 400, тёплый) + Audio (шипение) + Box Trigger</code>. Переменные: <code>IsOn (bool=false), MID_Screen (Material Instance Dynamic)</code>.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Логика вкл/выкл</h4></div><p>BeginPlay: <code>Create Dynamic Material Instance (M_TV_Screen) → Set на экран → сохранить в MID_Screen → Set ScreenOn 0</code>. На E (FlipFlop): A (вкл): <code>Set IsOn=true → Set Scalar ScreenOn 1.0 → Light Visible true → Play Sound → Widget «Телевизор включён»</code>. B (выкл): наоборот. Dynamic Instance обязателен — иначе крутите общий материал и гаснут все ТВ на карте!</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">BeginPlay → Create <b>Dynamic Material</b> → Set на экран</div><div class="bp-arrow">↓</div>
+<div class="bp-node branch">E → <b>FlipFlop</b> → A: ScreenOn <b>1.0</b> + Light <b>on</b> + звук | B: <b>0.0</b> + off</div>
+</div></div>
+<p><b>Второй пример — лампа-ловушка:</b> тот же BP, но вместо экрана — <code>Spot Light + звук гудения</code>. Подключите к генератору из <a href="blueprints-advanced.html">продвинутых</a>: пока нет питания — E даёт «Нет электричества». Один BP — два предмета, разница только в свете и тексте.</p>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: как улучшить</strong><p>Добавьте переключение каналов (3 Emissive-текстуры по кругу), шум при «нет сигнала», выключение при выходе из комнаты (EndOverlap → off — экономия FPS).</p></div></div>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>Модель встала в правильном масштабе (не с дом / не с ноготь).</li>
+<li>Стоит на столе ровно, не тонет, Collision BlockAll виден.</li>
+<li>Материал не розовый, экран гаснет/зажигается, свет синхронен.</li>
+<li>Второй ТВ на карте управляется независимо (Dynamic!).</li>
+</ul>
+<details><summary>Модель гигантская / крошечная</summary><p>Blender Unit не см или не Apply Scale. Переэкспортируйте со Scale 1.0. Временно — Scale в Details, но физика будет врать.</p></details>
+<details><summary>Розовый / шахматный материал</summary><p>Нет текстуры в слоте или sRGB перепутан. Назначьте материал заново, проверьте пути (не двигали проводником?).</p></details>
+<details><summary>Прохожу сквозь модель</summary><p>NoCollision. Добавьте Box Simplified Collision + BlockAll + Save. Проверьте Show → Collision.</p></details>
+<details><summary>Гаснут все телевизоры сразу</summary><p>Крутите общий Material, а не Dynamic Instance. Создайте MID на BeginPlay для каждого ТВ.</p></details>
+<div class="pager">
+<a href="day-night.html"><span>← Назад</span><strong>6. День и ночь</strong></a>
+<a href="blueprints-advanced.html"><span>Следующий урок →</span><strong>8. Продвинутые Blueprint</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

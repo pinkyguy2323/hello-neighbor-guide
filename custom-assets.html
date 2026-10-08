@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7. Custom assets — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">📦</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/custom-assets.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Assets</div><h1>7. Custom 3D models &amp; BP props</h1><p>Blender → FBX 2014–18 → 6 texture maps → emissive screen material → Simple/Complex/UCX collision → <code>BP_TV</code> on/off with sound + light. Plus lamp-trap variant + pink-material flowchart.</p><div class="badges"><span class="badge">Hard</span><span class="badge o">Blender → UE 4.20</span><span class="badge g">TV practice</span></div></div>
+<div class="article">
+<div class="alert ai"><div>⚠️</div><div><strong>Formats for 4.20.3</strong><p>Models <code>FBX binary 2014–2018 triangulated</code> (no glTF/USD). Textures <code>TGA/PNG 1024–2048</code>, Normal = DirectX (not OpenGL). Latin names only: <code>SM_TV_Body, T_TV_Screen_BC</code>.</p></div></div>
+<h2>Prep: scale, Pivot, UV</h2>
+<p>1 unit = 1 cm. TV 60×40×40. Apply Scale (Ctrl+A), origin to bottom so it sits on tables. UV 0–1 clean (Lightmap UV auto-generated, but base UV must be clean or bake blobs). 2 Blender materials: M_Body + M_Screen as separate mesh/polys or you can't toggle emissive.</p>
+<h2>Export &amp; import</h2>
+<p>Blender FBX: Scale 1.0, Apply Unit, -Z/ Y up, Selected only. UE Import to <code>Content/Meshes</code>: <code>Materials=false, Textures=false (separate!), Auto Collision=true, Lightmap UVs=true</code>. Auto-mats = pink slots — build your own. Textures to <code>Content/Textures</code>: BaseColor sRGB on, Normal = Normalmap sRGB off!, Rough/Metal = Masks sRGB off! (wrong sRGB on Normal = pimples).</p>
+<h2>6 maps + screen material</h2>
+<p>BaseColor (albedo), Normal (bumps, purple — normal), Roughness (white matte / black gloss: body .6, screen .15), Metallic (plastic 0, chrome 1), Emissive (self-glow), Opacity (glass .3, TV unused). <code>M_TV_Screen</code>: texture → BaseColor, <code>Scalar ScreenOn 1.0 × Emissive → Emissive</code>, Roughness .15. Blueprint drives ScreenOn 1↔0 — no material swap. <code>M_TV_Body</code>: color + Rough .6.</p>
+<h2>Collision: why you walk through</h2>
+<p>Simple box (fast — TV/walls): mesh → Collision → Add Box Simplified → Save, BlockAll. Complex per-triangle (slow — statues): Complexity → Use Complex as Simple. Custom UCX_ box from Blender for exact holes. Diagnose: Show → Collision (no red = NoCollision). Pink? Empty slot / moved .uasset via Explorer / sRGB mix / Cyrillic path — reassign, reimport, Latin only.</p>
+<h2>BP_TV + lamp variant</h2>
+<p>Components: Body Static BlockAll + Screen Static NoCollision + Point 800/r400 off + Audio hiss + Box trigger. Vars <code>IsOn, MID_Screen</code>. BeginPlay: <code>Create Dynamic Instance (M_TV_Screen) → set on screen → save → ScreenOn 0</code>. E FlipFlop: A on (ScreenOn 1 + light + sound + “TV on”), B off. Dynamic per-TV or all TVs toggle together! Variant: same BP as lamp-trap (Spot + hum) gated by generator power from <a href="blueprints-advanced.html">lesson 8</a>: no power → “No electricity”. Upgrades: 3 channels cycle, static noise, auto-off on EndOverlap for FPS.</p>
+<div class="bp"><div class="bp-row"><div class="bnode ev">BeginPlay → Dynamic Material → set on screen</div><div class="barr">↓</div><div class="bnode fn">E FlipFlop → A: 1.0 + light + sound | B: 0.0 + off</div></div></div>
+<details><summary>Giant/tiny, pink, ghost, all TVs sync?</summary><p>Re-export Scale 1.0 (temp Details scale lies physics). Reassign mats + Latin paths. Add Simplified + BlockAll. Use Dynamic Instance per TV.</p></details>
+<div class="pager"><a href="day-night.html"><span>← Back</span><strong>6. Day &amp; night</strong></a><a href="blueprints-advanced.html"><span>Next →</span><strong>8. Advanced BP</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/custom-assets.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

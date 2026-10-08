@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Troubleshooting bible — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🛠️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/troubleshooting.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Troubleshooting</div><h1>Troubleshooting bible: 17 classic fails</h1><p>Cause → 1-min diagnosis → fix → prevention. Bookmark this more than any lesson. Expanded: FPS triage + pre-package checklist.</p><div class="badges"><span class="badge">Reference</span><span class="badge o">17 fixes</span><span class="badge g">Checklist</span></div></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2>1–6: visibility, collision, dead Blueprint, trigger, hinge, light</h2>
+<p><b>Invisible:</b> Hidden in Game / closed eye / Opacity 0 / flipped normals / under terrain. Double-click name in Outliner to fly there. Never leave Scale 0 “temporarily”. <b>Walk-through:</b> NoCollision → Show→Collision (no red = none), BlockAll + Add Box Simplified + Save. <b>Dead BeginPlay:</b> actor in folder not on level / in Construction / wrong GameMode. Print “Alive!” first line: silent = not placed, talks = white-wire break downstream. <b>Trigger dead:</b> Generate Overlaps false / Block not Overlap / in wall / Cast filter cuts. Print without Cast first: prints = filter issue, silent = collision/size. Box ≥150 cm, OverlapAllDynamic. <b>Hinge:</b> center pivot = propeller — DoorPivot trick (<a href="puzzles.html">lesson 3</a>). <b>Bright:</b> stacked Directionals / Intensity 10 / Exposure 2 → 3–4 / 1.0, delete dupe. <b>Dark after Build:</b> no Lightmass Volume / Static unbaked / 0 — add Volume, Preview rebuild; temp Movable to confirm bake issue.</p>
+<h2>7–10: scale, pink, None/Cast, loops</h2>
+<p><b>Giant/tiny:</b> Blender units + Apply Scale; 180 cm human ruler. <b>Pink:</b> empty slot / Explorer-moved .uasset / sRGB mix / Cyrillic path — reassign, reimport, Latin only (Normal sRGB off!). <b>Accessed None:</b> empty ref (deleted target, unpicked eyedropper) — IsValid before foreign Gets + defaults. <b>Cast Failed:</b> chair entered player Cast — handle Failed (do nothing); it's your filter working. <b>Infinite Loop:</b> Tick→Spawn→Overlap no DoOnce / While no exit / Dispatchers calling each other. Editor shows culprit node — DoOnce + cooldown, counter &lt;1000 + Break, break rings via Interface.</p>
+<h2>11–12: AI, T-Pose, FPS</h2>
+<p><b>AI frozen:</b> no NavMesh Bounds Volume + Build Paths / no Controller / capsule in wall. <b>T-Pose:</b> no AnimBP / foreign Skeleton — native Anim back, same Skeleton, Area zones (<a href="custom-neighbor.html">lesson 9</a>). <b>FPS:</b> 50 Movable shadows + 4K + Tick spam + Complex everywhere + 505 landscape + 20 Prints. Fix in 10 min: Static + bake, 1024 tex, LOD Auto, Timer .2s over Tick, kill Prints, Stat FPS/Unit → target 60.</p>
+<h2>Pre-package checklist</h2>
+<p>☐ Map in plugin folder, Latin name, saved, light built clean. ☐ Player Start above ground, Areas + GeneralSwitch if Neighbor house. ☐ All BPs compile, no Accessed None in Play log. ☐ Debug Prints removed, single Widget, sounds present. ☐ Full run: key → door → crowbar → boards → card → drain → finale. ☐ Package → test .pak clean copy → Workshop with icon. Google as <code>“Hello Neighbor Mod Kit” + issue + 4.20.3</code> (ModDB / Steam / wiki.gg) or you'll get UE5 advice that doesn't apply.</p>
+<div class="pager"><a href="custom-neighbor.html"><span>← Back</span><strong>9. Neighbor</strong></a><a href="community.html"><span>Next →</span><strong>✎ Community</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/troubleshooting.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

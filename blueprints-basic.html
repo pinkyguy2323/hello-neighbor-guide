@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5. Blueprint basics — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🧩</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/blueprints-basic.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Blueprint</div><h1>5. Blueprint for beginners</h1><p>Actor/Component/Event/Variable, wire colors, 16 core nodes with mistakes, magic-cube practice. After this you read <a href="puzzles.html">puzzle schemas</a> like text.</p><div class="badges"><span class="badge">Easy</span><span class="badge o">Foundation</span><span class="badge g">Cube practice</span></div></div>
+<div class="article">
+<h2>Dictionary</h2>
+<div class="tablewrap"><table><tr><th>Term</th><th>Plain English</th></tr>
+<tr><td>Blueprint Class</td><td>Drawing with logic. One drawing → many copies</td></tr>
+<tr><td>Actor</td><td>Anything placeable: cube, door, lamp</td></tr>
+<tr><td>Component</td><td>Part of Actor: mesh, collision, light (car vs wheels)</td></tr>
+<tr><td>Event Graph</td><td>Sheet where you draw nodes</td></tr>
+<tr><td>Construction Script</td><td>Runs in editor, not in game — layout only, no damage/sound!</td></tr>
+<tr><td>Variable</td><td>Data box: HasKey, Score</td></tr>
+<tr><td>Function / Event</td><td>Reusable recipe with in/out vs “when X happened” trigger</td></tr>
+<tr><td>Node / Pin / Reference</td><td>Brick / its in-out circles / link to “that exact object”</td></tr></table></div>
+<h2>Wire colors</h2>
+<p>White = execution order (always first!). Red Boolean, light-blue Integer, green Float, pink String/Name/Text (Name for tags, Text for UI), yellow Vector, purple Rotator, orange Transform, blue Object ref (empty = Accessed None).</p>
+<div class="alert ai"><div>⚠️</div><div><strong>White wires rule</strong><p>Color pins without a white path do nothing. Route Event → action in white first, then feed data.</p></div></div>
+<h2>16 core nodes (use + mistake each)</h2>
+<p><b>BeginPlay</b> — once at start (remember shark Home). Mistake: in Construction or on actor not placed. <b>Tick</b> — ~60/s (chase). Mistake: heavy Spawn/Print on Tick. <b>Branch</b> — if/else on bool. Mistake: int without Equal. <b>Delay</b> — N-sec pause. Mistake: on Tick (hundreds pile up). <b>Print String</b> — debug text (key “1” to dedupe). Remove before shipping — use Widget (<a href="day-night.html">lesson 6</a>). <b>Set/Get</b> — write/read var (Ctrl-drag = Set). <b>Sequence</b> — Then 0 then 1 (not waiting!). <b>Do Once</b> — one shot until Reset (pickup, valve). <b>FlipFlop</b> — toggle A/B (one per door!). <b>Timeline</b> — 0→1 curve (door 0→90°, drain 1→0); mesh must be Movable, Update wired. <b>Cast To</b> — “are you player?” + access vars; handle Failed. <b>Is Valid</b> — null guard before every foreign Get (kills 90% Accessed None). <b>Destroy/Spawn</b> — remove key / create actor (needs Class+Transform, check Target!). <b>SetLocation/Rotation + Play Sound</b> — move shark/door, beep at reader; Movable + DeltaTime in Tick.</p>
+<h2>Practice: magic cube</h2>
+<p><code>BP_MagicCube</code>: Cube Movable BlockAll + Box 400 Overlap, vars <code>Home, IsAway</code>. BeginPlay: <code>Home = Location</code>. Graph: <code>BeginOverlap → Cast Player → IsValid → Branch[!IsAway] → IsAway=true → Location + up/side 300 → Delay 2.0 → Home → IsAway=false</code>. Without IsAway it jitters — flags explained. Test: approach 5×, returns exactly to Home.</p>
+<div class="bp"><div class="bp-row"><div class="bnode ev">Overlap → Cast → IsValid → Branch IsAway?</div><div class="barr">↓ false</div><div class="bnode fn">IsAway=true → jump → Delay 2.0 → Home → false</div></div></div>
+<details><summary>BeginPlay silent / Accessed None?</summary><p>Actor not on level / logic in Construction / wrong GameMode. Print first line. Guard foreign Gets with IsValid — see <a href="troubleshooting.html">fixes</a>.</p></details>
+<div class="pager"><a href="water.html"><span>← Back</span><strong>4. Water</strong></a><a href="day-night.html"><span>Next →</span><strong>6. Day &amp; night</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/blueprints-basic.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

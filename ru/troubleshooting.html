@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Частые ошибки Hello Neighbor Mod Kit — справочник</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🛠️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>Частые ошибки Hello Neighbor Mod Kit</h1><p>17 класических бед моддера: для каждой — причина, диагностика за 1 минуту, фикс и профилактика. Добавьте в закладки: сюда вы будете возвращаться чаще, чем в любой урок.</p><div class="badges"><span class="badge">Справочник</span><span class="badge orange">17 ошибок</span><span class="badge green">Причина → фикс</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#e1">Объект невидимый</a></li>
+<li><a href="#e2">Игрок проходит сквозь объект</a></li>
+<li><a href="#e3">Blueprint не запускается / BeginPlay молчит</a></li>
+<li><a href="#e4">Trigger не реагирует</a></li>
+<li><a href="#e5">Дверь крутится не вокруг петли</a></li>
+<li><a href="#e6">Свет слишком яркий / темно после Build</a></li>
+<li><a href="#e7">Модель маленькая / большая</a></li>
+<li><a href="#e8">Розовый материал</a></li>
+<li><a href="#e9">Accessed None / Cast Failed</a></li>
+<li><a href="#e10">Infinite Loop</a></li>
+<li><a href="#e11">AI не двигается / T-Pose</a></li>
+<li><a href="#e12">Игра тормозит</a></li>
+<li><a href="#check">Чек-лист перед упаковкой</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+
+<h2 id="e1">1. Объект невидимый</h2>
+<p><b>Причина:</b> Hidden in Game, видимость выкл в Outliner (глазик), материал прозрачный (Opacity 0), меш задом наперёд (Normals внутрь), или актор под землёй.</p>
+<p><b>Диагностика:</b> Outliner → двойной клик по имени (камера прилетит). Если прилетела под землю — Location Z. Если на месте, но пусто — проверьте Hidden/Visibility + откройте меш (видно ли в редакторе меша?).</p>
+<p><b>Фикс:</b> снять Hidden, Opacity вернуть, Flip Normals в Blender при перевёрнутости, поднять Z. <b>Профилактика:</b> не ставьте Scale 0 даже «временно» — забудете.</p>
+
+<h2 id="e2">2. Игрок проходит через объект</h2>
+<p><b>Причина:</b> Collision Preset NoCollision / Overlap вместо BlockAll, нет Simple Collision у импортированной модели.</p>
+<p><b>Диагностика:</b> Viewport Show → Collision: нет красного каркаса = нет Collision. Details → Collision Enabled должно быть Query and Physics.</p>
+<p><b>Фикс:</b> BlockAll + Add Box Simplified Collision + Save. <b>Профилактика:</b> проверяйте Collision сразу после импорта (см. <a href="custom-assets.html">урок 7</a>).</p>
+
+<h2 id="e3">3. Blueprint не запускается / Event BeginPlay не работает</h2>
+<p><b>Причина:</b> актор не стоит на уровне (лежит в папке), BeginPlay в Construction Script, Level Blueprint переопределил GameMode, Simulation выкл.</p>
+<p><b>Диагностика:</b> повесьте <code>Print String «Я жив!»</code> в самое начало BeginPlay. Молчит = актора нет на сцене или не тот уровень открыт. Говорит = дальше по белой стрелке обрыв.</p>
+<p><b>Фикс:</b> перетащить Blueprint на уровень, перенести логику из Construction в BeginPlay, Compile + Save. Подробнее — <a href="blueprints-basic.html">основы Blueprint</a>.</p>
+
+<h2 id="e4">4. Trigger не реагирует</h2>
+<p><b>Причина:</b> Generate Overlap Events=false, Collision Block вместо Overlap, нет Cast к игроку (срабатывает, но Branch режет), триггер слишком мал/внутри стены.</p>
+<p><b>Диагностика:</b> на BeginOverlap повесьте Print «Кто-то вошёл» без Cast. Печатает = проблема в Cast/фильтре. Молчит = Collision/размер/позиция.</p>
+<p><b>Фикс:</b> OverlapAllDynamic + Generate Overlap + вынуть из стены + Cast To Player + IsValid. Размер Box минимум 150 см.</p>
+
+<h2 id="e5">5. Дверь вращается вокруг неправильной точки</h2>
+<p><b>Причина:</b> Pivot в центре полотна вместо петли. Классика всех новичков.</p>
+<p><b>Фикс:</b> Scene Component DoorPivot на краю проёма → полотно вложить → вращать Pivot через SetRelativeRotation. См. <a href="puzzles.html">головоломки</a>.</p>
+
+<h2 id="e6">6. Свет слишком яркий / после Build всё стало тёмным</h2>
+<p><b>Ярко:</b> два Directional друг на друге, Intensity 10 вместо 3, Exposure 2.0. Удалите дубликат в Outliner, верните 3–4 / 1.0.</p>
+<p><b>Темно после Build:</b> нет Lightmass Importance Volume, свет Static без запекания, Intensity 0. Добавьте Volume вокруг дома → Build Preview → проверьте. Временно переключите всё на Movable чтобы убедиться, что дело в запекании.</p>
+
+<h2 id="e7">7. Модель импортировалась слишком маленькой / большой</h2>
+<p><b>Причина:</b> Blender Unit не сантиметры, не Apply Scale, FBX Scale 100/0.01.</p>
+<p><b>Фикс:</b> переэкспорт Scale 1.0 + Apply. Временно — Scale в Details, но физика будет врать. Рост персонажа 180 см — линейка.</p>
+
+<h2 id="e8">8. Материал розовый или отсутствует</h2>
+<p><b>Причина:</b> пустой слот, текстура удалена/перемещена проводником, sRGB перепутан, русские буквы в пути.</p>
+<p><b>Фикс:</b> назначить материал в Element 0/1, реимпорт текстур, только латиница в именах, Normal — sRGB off. См. <a href="custom-assets.html">материалы</a>.</p>
+
+<h2 id="e9">9. Blueprint выдаёт Accessed None / Cast Failed</h2>
+<p><b>Accessed None:</b> читаете пустую ссылку (игрок удалён, дверь не назначена пипеткой). <b>Фикс:</b> IsValid перед каждым чужим Get + дефолтные значения.</p>
+<p><b>Cast Failed:</b> Cast к игроку, а вошёл стул. <b>Фикс:</b> обработайте пин Failed (ничего не делать) или проверяйте класс заранее. Это не ошибка движка — это ваш фильтр сработал, радуйтесь!</p>
+
+<h2 id="e10">10. Infinite Loop (зацикливание)</h2>
+<p><b>Причина:</b> Tick → Spawn → Overlap → снова Tick без DoOnce; WhileLoop без выхода; два Dispatcher звонят друг другу.</p>
+<p><b>Диагностика:</b> редактор завис + окно Infinite Loop с указанием ноды. Откройте — там стрелка на виновника.</p>
+<p><b>Фикс:</b> DoOnce + Cooldown Delay, счётчик итераций в цикле (Loop < 1000 + Break), разорвать кольцо через Interface. Никогда не вешайте Spawn на Tick без задержки!</p>
+
+<h2 id="e11">11. AI не двигается / сосед стоит в T-Pose</h2>
+<p><b>Не двигается:</b> нет NavMesh Bounds Volume (Place Actors → Volumes → растянуть + Build Paths), AI Controller не назначен, Capsule в стене.</p>
+<p><b>T-Pose:</b> нет Anim Blueprint или чужой Skeleton. Верните родной Anim Class, проверьте Skeleton (см. <a href="custom-neighbor.html">замену соседа</a>), зоны BP_Area* на месте.</p>
+
+<h2 id="e12">12. Игра сильно тормозит</h2>
+<p><b>Причины по весу:</b> 1) 50 Movable-теней + 4K-текстуры; 2) Tick без фильтров; 3) Complex Collision везде; 4) гигантский Landscape 505+ без LOD; 5) 20 Print String каждый кадр.</p>
+<p><b>Фикс за 10 минут:</b> свет Static где можно + Build, текстуры 2048→1024, LOD Auto, Tick → Timer 0.2с, удалить Print, Stat FPS/Stat Unit для замера. Цель — 60 FPS на средней карте.</p>
+
+<h2 id="check">Чек-лист перед упаковкой мода</h2>
+<ul class="checklist">
+<li>Карта в папке плагина, имя латиницей, Ctrl+S, Build Lighting без красных ошибок.</li>
+<li>Player Start над землёй, зоны Area + GeneralSwitch (если дом соседа) на месте.</li>
+<li>Все Blueprint Compile без ошибок, нет Accessed None в логе Play.</li>
+<li>Убраны Print-отладки, виджет один, звук везде есть.</li>
+<li>Тест с нуля: ключ → дверь → лом → доски → карта → слив → финал проходится.</li>
+<li>Package → тест .pak на чистой копии + подпись в Workshop с иконкой.</li>
+</ul>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: как гуглить дальше</strong><p>Запросы: <code>«Hello Neighbor Mod Kit» + проблема (ModDB / Steam Guides / helloneighbor.wiki.gg)</code>. Указывайте версию <code>4.20.3</code> — иначе получите советы для UE5, которые не подойдут. Источники этого сайта: ModDB Hello Neighbor Modding Guide + Tuto #2–#6, Wiki Hello Mod Kit, Steam-гайд по установке.</p></div></div>
+<div class="pager">
+<a href="custom-neighbor.html"><span>← Назад</span><strong>9. Свой сосед</strong></a>
+<a href="index.html"><span>На главную →</span><strong>База знаний</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

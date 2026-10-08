@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5. Blueprint для новичков — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🧩</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>5. Blueprint для новичков</h1><p>Разбираем визуальное программирование с нуля: что такое Actor и ноды, какого цвета провода, 16 главных нод с примерами и практика «куб убегает от игрока». После урока вы будете читать схемы из <a href="puzzles.html">головоломок</a> как текст.</p><div class="badges"><span class="badge">★ Легко</span><span class="badge orange">Фундамент всего</span><span class="badge green">Практика: умный куб</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#dict">Словарь: Actor, Component, Event, Variable…</a></li>
+<li><a href="#wires">Цвета проводов и типы данных</a></li>
+<li><a href="#nodes">16 главных нод подробно</a></li>
+<li><a href="#cube">Практика: куб убегает от игрока</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>Создадим <code>BP_MagicCube</code>: игрок входит в Trigger → куб отпрыгивает в сторону → ждёт 2 сек → возвращается. По пути выучим все базовые ноды и научимся отличать белый провод выполнения от цветных проводов данных.</p>
+<h2 id="dict">Словарь: объясняем каждый термин при первом использовании</h2>
+<div class="table-wrap"><table><tr><th>Термин</th><th>Простыми словами</th><th>Где находится</th></tr>
+<tr><td><b>Blueprint Class</b></td><td>Чертёж объекта с логикой. Один чертёж → много копий на уровне</td><td>Content Browser → Add New → Blueprint Class</td></tr>
+<tr><td><b>Actor</b></td><td>Любой объект, который можно разместить на уровне: куб, дверь, лампа</td><td>Родитель почти всех Blueprint</td></tr>
+<tr><td><b>Component</b></td><td>Часть Actor: модель, Collision, свет, звук. Actor — машина, Component — колёса и фары</td><td>Вкладка Viewport внутри Blueprint</td></tr>
+<tr><td><b>Event Graph</b></td><td>Лист, где рисуют логику из нод</td><td>Вкладка Event Graph</td></tr>
+<tr><td><b>Construction Script</b></td><td>Логика, что выполняется в редакторе (до Play). Для расстановки, не для игры</td><td>Отдельная вкладка. Не ставьте туда звук/урон!</td></tr>
+<tr><td><b>Variable (переменная)</b></td><td>Коробочка с данными: HasKey, Score, DoorOpen</td><td>Панель My Blueprint → Variables → +</td></tr>
+<tr><td><b>Function</b></td><td>Свой «рецепт» из нод с входом/выходом, чтобы не копировать</td><td>My Blueprint → Functions</td></tr>
+<tr><td><b>Event</b></td><td>«Когда случилось…»: BeginPlay, Overlap, нажата E</td><td>Красные ноды, правый клик → Add Event</td></tr>
+<tr><td><b>Node (нода)</b></td><td>Кирпичик логики: Branch, Delay, Print</td><td>Правый клик в Graph</td></tr>
+<tr><td><b>Pin (пин)</b></td><td>Кружочек входа/выхода у ноды. Белые — порядок, цветные — данные</td><td>Соединяются проводами</td></tr>
+<tr><td><b>Execution Pin</b></td><td>Белый пин: «выполни следующее». Логика идёт по белым стрелкам</td><td>Треугольнички ▶</td></tr>
+<tr><td><b>Reference</b></td><td>Ссылка «тот самый объект»: As Player, Target Door</td><td>Синие пины Object</td></tr>
+</table></div>
+<h2 id="wires">Цвета проводов и типы данных</h2>
+<div class="table-wrap"><table><tr><th>Тип</th><th>Цвет</th><th>Пример</th><th>Когда</th></tr>
+<tr><td>Exec (выполнение)</td><td>⚪ белый</td><td>▶ → ▶</td><td>Порядок действий. Всегда идёт первым!</td></tr>
+<tr><td>Boolean</td><td>🔴 красный</td><td><code>HasKey = true</code></td><td>Да/нет: закрыто, есть ключ</td></tr>
+<tr><td>Integer</td><td>🔵 голубой</td><td><code>Keys = 3</code></td><td>Целые: кол-во, ID ключа</td></tr>
+<tr><td>Float</td><td>🟢 зелёный</td><td><code>WaterLevel = 0.5</code></td><td>Дробные: время, яркость, уровень воды</td></tr>
+<tr><td>String / Name / Text</td><td>🌸 розовый / фиолетовый</td><td><code>"Нужен ключ"</code></td><td>Текст. Name — для тегов (быстрее), Text — для экрана (локализация)</td></tr>
+<tr><td>Vector</td><td>🟡 жёлтый</td><td><code>(X=100,Y=0,Z=50)</code></td><td>Позиция, размер, скорость</td></tr>
+<tr><td>Rotator</td><td>🟣 фиолетовый</td><td><code>(Pitch,Yaw,Roll)</code></td><td>Поворот двери/солнца</td></tr>
+<tr><td>Transform</td><td>🟠 оранжевый</td><td>Location+Rotation+Scale</td><td>Спавн целиком</td></tr>
+<tr><td>Object Reference</td><td>🔵 синий</td><td><code>As Player, Target</code></td><td>«Тот самый» актор. Пустой = Accessed None!</td></tr>
+</table></div>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: белые провода — главные</strong><p>Новичок соединяет цветные пины и удивляется, что ничего не происходит. Логика выполняется только по <b>белым</b> стрелкам! Сначала проведите белый путь Event → действие, потом подайте данные в цветные пины.</p></div></div>
+<h2 id="nodes">16 главных нод: что делает, пример, ошибка</h2>
+<details open><summary>1. Event BeginPlay — «когда уровень начался»</summary><p><b>Делает:</b> срабатывает один раз при старте игры для каждого актора.<br><b>Пример:</b> запомнить HomeLocation акулы, показать «Найдите ключ».<br><b>Ошибка:</b> ставите в Construction Script вместо BeginPlay — выполняется в редакторе, в игре молчит. Или BeginPlay на акторе, которого нет на уровне (лежит в папке, но не поставлен).</p></details>
+<details open><summary>2. Event Tick — «каждый кадр»</summary><p><b>Делает:</b> выполняется ~60 раз/сек. Для погони, проверки дистанции.<br><b>Пример:</b> акула каждый Tick ползёт к игроку.<br><b>Ошибка:</b> вешаете тяжёлое (Spawn, Delay, Print) на Tick — лаги и спам. Ставьте Branch-фильтр и по возможности таймеры вместо Tick.</p></details>
+<details><summary>3. Branch — «если… то… иначе…»</summary><p><b>Делает:</b> развилка по Boolean. True → верх, False → низ.<br><b>Пример:</b> HasKey? true → открыть, false → «Нужен ключ».<br><b>Ошибка:</b> подали Integer вместо Boolean (нужен Equal перед Branch).</p></details>
+<details><summary>4. Delay — «подожди N секунд»</summary><p><b>Делает:</b> пауза в белой цепочке. Duration 2.0.<br><b>Пример:</b> куб ждёт 2с перед возвратом.<br><b>Ошибка:</b> Delay на Tick (накапливаются сотни задержек) или ждёте точную паузу при лагах (Delay не точный таймер).</p></details>
+<details><summary>5. Print String — «напиши на экране»</summary><p><b>Делает:</b> отладка: текст в углу + в лог. Key «1» чтобы не спамило.<br><b>Пример:</b> Print HasKey после подбора ключа.<br><b>Ошибка:</b> забыли убрать 20 Print перед упаковкой — экран в мусоре. Для игрока используйте Widget (урок 6).</p></details>
+<details><summary>6–7. Set / Get — «положи / возьми»</summary><p><b>Делают:</b> Set меняет переменную, Get читает. Перетащите переменную в граф с зажатым Ctrl (Set) / Alt (Get).<br><b>Пример:</b> Set HasKey=true при подборе.<br><b>Ошибка:</b> Set не той копии (у двери №2, а открываете №1).</p></details>
+<details><summary>8. Sequence — «сделай по порядку»</summary><p><b>Делает:</b> выполняет Then 0, потом Then 1. Удобно: сначала звук, потом анимация.<br><b>Ошибка:</b> думаете, что Then 1 ждёт конца Then 0 — нет, идут почти сразу. Для ожидания — Delay/Timeline между.</p></details>
+<details><summary>9. Do Once — «только один раз»</summary><p><b>Делает:</b> пропускает сигнал раз, дальше глухо, пока не Reset.<br><b>Пример:</b> вентиль слива, подбор ключа.<br><b>Ошибка:</b> забыли Reset когда надо повторно (дверь открывается раз за игру — ок, а ловушка должна сбрасываться).</p></details>
+<details><summary>10. FlipFlop — «туда-сюда»</summary><p><b>Делает:</b> 1-й вызов → A, 2-й → B, 3-й → A…<br><b>Пример:</b> E открывает/закрывает дверь.<br><b>Ошибка:</b> два FlipFlop подряд дают рассинхрон (дверь открыта, а логика думает закрыта). Один FlipFlop на дверь!</p></details>
+<details><summary>11. Timeline — «анимация по времени»</summary><p><b>Делает:</b> кривая 0→1 за N сек, пины Play/Reverse/Update/Finished.<br><b>Пример:</b> дверь 0→90°, вода 1→0.<br><b>Ошибка:</b> меш Static вместо Movable; длина 0; Update не подключён.</p></details>
+<details><summary>12. Cast To — «ты случайно не игрок?»</summary><p><b>Делает:</b> проверяет класс + даёт доступ к его переменным (As…).<br><b>Пример:</b> Cast To BP_Player → Get HasKey.<br><b>Ошибка:</b> Cast Failed (это был стул, не игрок) — всегда обрабатывайте пин Failed или ставьте IsValid.</p></details>
+<details><summary>13. Is Valid — «ты существуешь?»</summary><p><b>Делает:</b> проверка ссылки на None. Is Valid → ветка, Is Not Valid → заглушка.<br><b>Пример:</b> перед Get Player в двери.<br><b>Ошибка:</b> отсутствие IsValid = Accessed None в 90% случаев.</p></details>
+<details><summary>14–15. Destroy / Spawn Actor — «удалить / создать»</summary><p><b>Делают:</b> Destroy убирает актор (ключ подобран), Spawn создаёт (заспавнить доску заново). Spawn нужен Class + Transform.<br><b>Ошибка:</b> DestroyPLAYERа вместо ключа (проверяйте Target!) или Spawn без Collision — объекты внутри друг друга взрываются физикой.</p></details>
+<details><summary>16. SetActorLocation / Rotation + Play Sound</summary><p><b>Делают:</b> двигают/крутят актор, играют звук в точке.<br><b>Пример:</b> акула плывёт, дверь крутится, вентиль скрипит.<br><b>Ошибка:</b> двигаете Static (нужен Movable) или забываете DeltaTime в Tick (скорость зависит от FPS).</p></details>
+<h2 id="cube">Практика: куб убегает от игрока</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Создаём BP_MagicCube</h4></div><p>Add New → Blueprint Class → Actor → <code>BP_MagicCube</code>. Компоненты: <code>Static Mesh Cube (Movable, BlockAll)</code> + <code>Box Collision 400 (OverlapAllDynamic)</code>. Переменные: <code>Home (Vector), IsAway (Bool=false)</code>. На BeginPlay: <code>Set Home = GetActorLocation</code>.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Отпрыгнул → подождал → вернулся</h4></div><p>Граф: <code>OnBeginOverlap → Cast To Player → IsValid → Branch [IsAway? false] → Set IsAway=true → GetActorLocation + (0,0,200)+(случайный X/Y 300) → SetActorLocation (или Timeline 0.5с для плавности) → Delay 2.0 → SetActorLocation (Home) → Set IsAway=false</code>. Без IsAway куб будет дёргаться при каждом Overlap.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">OnBeginOverlap → <b>Cast To Player → IsValid</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node branch"><b>Branch IsAway?</b> (false → дальше, true → стоп)</div><div class="bp-arrow">↓</div>
+<div class="bp-node func">Set <b>IsAway=true</b> → <b>SetActorLocation</b> (вверх+вбок)</div><div class="bp-arrow">↓</div>
+<div class="bp-node var"><b>Delay 2.0</b> → SetActorLocation (<b>Home</b>) → Set <b>IsAway=false</b></div>
+</div></div>
+<p><b>Как проверить:</b> Play → подойдите → куб прыгает, через 2с возвращается. Подойдите 5 раз подряд — не должно задвоиться (спасибо IsAway). Удалите IsAway ради эксперимента — увидите баг «дёрганья» и поймёте, зачем флаги.</p>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>Print String показывает HasKey=true после подбора.</li>
+<li>BeginPlay срабатывает (видно по Print), Tick не спамит.</li>
+<li>Cast идёт к правильному классу, стоит IsValid.</li>
+<li>Куб возвращается ровно в Home, а не «примерно туда».</li>
+</ul>
+<details><summary>Event BeginPlay не работает</summary><p>Актор не на уровне, а в папке; или BeginPlay в Construction Script; или Level Blueprint перекрывает GameMode. Поставьте Print в самое начало BeginPlay — если молчит, актора нет на сцене.</p></details>
+<details><summary>Accessed None</summary><p>Пустая ссылка (игрок удалён, дверь не назначена). Поставьте IsValid перед каждым Get чужой переменной. См. <a href="troubleshooting.html">справочник</a>.</p></details>
+<div class="pager">
+<a href="water.html"><span>← Назад</span><strong>4. Вода и акула</strong></a>
+<a href="day-night.html"><span>Следующий урок →</span><strong>6. День и ночь</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

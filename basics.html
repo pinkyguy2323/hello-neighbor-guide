@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1. Map basics: sky, light, landscape — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🌤️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/basics.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Map basics</div><h1>1. Map basics: sky, light &amp; landscape</h1><p>Empty level → 4 editor windows → sun + Sky Light + Atmosphere + Fog + Post → Static/Stationary/Movable with 6 presets → Build Lighting → Landscape hill/road/pit/platform. Expanded: exposure science + Lightmass deep-dive + fall-through matrix.</p><div class="badges"><span class="badge">Easy</span><span class="badge o">Required</span><span class="badge g">Result: playable meadow</span></div></div>
+<div class="toc"><h2>📑 Contents</h2><ol><li><a href="#goal">Goal</a></li><li><a href="#windows">4 windows</a></li><li><a href="#level">New level &amp; save</a></li><li><a href="#camera">Camera &amp; hotkeys</a></li><li><a href="#sky">Sky rig</a></li><li><a href="#lights">Lights &amp; Mobility</a></li><li><a href="#build">Build Lighting</a></li><li><a href="#land">Landscape practice</a></li><li><a href="#fall">Fall-through fix</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2 id="goal">Goal</h2>
+<p><b>Actor</b> — anything placeable. <b>Component</b> — a part of an Actor (mesh, collision, light). You will finish with <code>MyFirstMap_EN</code>: blue sky, sun shadows, distance haze, 63×63 m ground with hill, dirt road, pit and 12×12 m flat pad. <span class="kbd">Alt</span>+<span class="kbd">P</span> to run without falling.</p>
+<h2 id="windows">4 windows</h2>
+<p><b>Viewport</b> — 3D eye. Top bar: Perspective/Top, Lit/Unlit, fly speed. Black view = Unlit mode or camera underground — press <span class="kbd">F</span> on a selected object. <b>Content Browser</b> — asset warehouse below. Never drag <code>.uasset</code> via Windows Explorer — use Migrate or links break. <b>World Outliner</b> — object list (right-top). <b>Details</b> — settings of selection; use its search box for <code>Intensity</code> instead of scrolling.</p>
+<div class="alert at"><div>💡</div><div><strong>Lost panel?</strong><p><code>Window → Content Browser / World Outliner</code>, reset via <code>Window → Reset Layout</code>.</p></div></div>
+<h2 id="level">New level &amp; save</h2>
+<div class="step"><div class="step-head"><div class="snum">1</div><h4>Empty level</h4></div><p><code>File → New Level → Empty Level</code> (not Default — Default drags extra lights you will duplicate). Black grid = normal, no light yet.</p></div>
+<div class="step"><div class="step-head"><div class="snum">2</div><h4>Save inside your plugin</h4></div><p><code>File → Save Current As… → /Mods/YourMod/Content/Maps/MyFirstMap_EN</code>. Latin only, no spaces — spaces break .pak packaging. <span class="kbd">Ctrl</span>+<span class="kbd">S</span> every 5 min; 4.20 crashes on weak PCs during Build.</p></div>
+<div class="step"><div class="step-head"><div class="snum">3</div><h4>Player Start</h4></div><p><code>Place Actors → Basic → Player Start</code>, lift Z +100 cm. Without it you spawn at 0,0,0 — often inside ground.</p></div>
+<h2 id="camera">Camera &amp; hotkeys</h2>
+<div class="tablewrap"><table><tr><th>Action</th><th>Keys</th><th>Note</th></tr>
+<tr><td>Fly</td><td>RMB held + <span class="kbd">W</span><span class="kbd">A</span><span class="kbd">S</span><span class="kbd">D</span>, <span class="kbd">Q</span>/<span class="kbd">E</span> up/down</td><td>Without RMB, WASD does nothing</td></tr>
+<tr><td>Speed</td><td>Wheel, <span class="kbd">1</span>–<span class="kbd">8</span></td><td>1 room, 6–8 street</td></tr>
+<tr><td>Focus</td><td><span class="kbd">F</span></td><td>Fly to selection</td></tr>
+<tr><td>Move/Rotate/Scale</td><td><span class="kbd">W</span>/<span class="kbd">E</span>/<span class="kbd">R</span> with RMB released</td><td>Same letters, different mode! Confusing #1</td></tr>
+<tr><td>Duplicate</td><td><span class="kbd">Alt</span>+drag gizmo</td><td>Wall rows</td></tr>
+<tr><td>Play</td><td><span class="kbd">Alt</span>+<span class="kbd">P</span> / <span class="kbd">Esc</span></td><td>Test</td></tr>
+</table></div>
+<h2 id="sky">Sky rig (5 actors)</h2>
+<p>1) <b>Directional Light</b> (sun): Rotation Y −50°, Intensity 3–5 day, color #FFF2DF, Cast Shadows on. 2) <b>Sky Light</b>: SLS Captured Scene, 1.0 — fills shadows so they are not pitch black. 3) <b>Sky Atmosphere</b> + <b>Exponential Height Fog</b> Density 0.01–0.03 day. Early kits (4.18/4.19) had <code>Atmospheric Fog</code> instead — use it, same idea, never both (overexposure). 4) <b>Post Process Volume</b> with <code>Infinite Extent=true</code>: Exposure 1.0, Saturation 1.1.</p>
+<div class="alert ai"><div>⚠️</div><div><strong>Version note</strong><p>Final Mod Kit is 4.20.3 with Sky Atmosphere. If your Place Actors shows Atmospheric Fog, you are on an older kit build — follow the same numbers with Density 0.3–0.6.</p></div></div>
+<h2 id="lights">Lights &amp; Mobility + 6 presets</h2>
+<div class="tablewrap"><table><tr><th>Light</th><th>Use</th></tr><tr><td>Directional</td><td>Sun/moon, 1 per outdoors</td></tr><tr><td>Point</td><td>Bulb, Attenuation 400–800</td></tr><tr><td>Spot</td><td>Porch/cone 40–60°</td></tr><tr><td>Sky</td><td>Fill, always 1</td></tr></table></div>
+<p><b>Static</b> — baked, fastest. <b>Stationary</b> — fixed position but color/brightness changeable (lamp that turns off). <b>Movable</b> — dynamic every frame (flashlight, rotating sun). Key params: <code>Intensity, Color, Attenuation Radius, Source Radius (soft shadow), Cast Shadows</code>.</p>
+<p>Presets: Day 4.0 #FFF3E0 Y−55° / Sunset 2.2 #FF7A2F Y−14° Fog .045 / Night 0.2 #6A86FF Sky .3 / Room Point 1200 r700 #FFE7C2 Stationary / Desk lamp 600 r350 / Window Spot 3000 cone 45° cold.</p>
+<h2 id="build">Build Lighting</h2>
+<p>Static/Stationary must be baked: add <code>Lightmass Importance Volume</code> around play area, <code>Build → Lighting Quality → Preview</code> (draft) / Production (final) → <code>Build Lighting Only</code>. Movable needs no bake but costs FPS. <b>Deep-dive:</b> Lightmass shoots photons from lights, bounces via Irradiance Cache; without Volume it samples infinity → dark map. Keep UV Lightmap 64+ on walls or bake shows blobs.</p>
+<h2 id="land">Landscape practice</h2>
+<p>Modes → Landscape → Create New 63×63 (fast). Tools: <b>Sculpt</b> (Shift=invert), <b>Smooth</b> after every hill, <b>Flatten</b> click-height then paint pad, <b>Noise</b> 0.05, <b>Erosion</b> if present. <b>Paint</b> needs Layer Blend material + per-layer Layer Info or brush paints nothing (#1 complaint). Hill: size 1200 str .4 ×3 → Smooth. Road: Flatten narrow + brown layer. Pit: Shift+Sculpt. Pad: Flatten 1200×1200 cm square.</p>
+<h2 id="fall">Fall-through matrix</h2>
+<div class="tablewrap"><table><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr><tr><td>Fall at spawn</td><td>Player Start underground</td><td>Z +50–150</td></tr><tr><td>Fall everywhere</td><td>Landscape NoCollision</td><td>Collision BlockAll + Query and Physics</td></tr><tr><td>Fall from height</td><td>Thin floor + fast fall tunnels</td><td>Thicker floor, spawn closer</td></tr><tr><td>Fly not walk</td><td>Spectator pawn</td><td>GameMode Default Pawn = BP_PlayerCharacter</td></tr></table></div>
+<details><summary>Too bright / dark after build / black sky?</summary><p>Bright: two Directionals stacked or Exposure 2. Dark: no Volume or Static unbaked. Black sky: missing Sky Light or Lit→Unlit. See <a href="troubleshooting.html">troubleshooting</a>.</p></details>
+<div class="pager"><a href="index.html"><span>← Back</span><strong>Home</strong></a><a href="building.html"><span>Next →</span><strong>2. Building a house</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • Hello Neighbor © tinyBuild • UE © Epic • <a href="ru/basics.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

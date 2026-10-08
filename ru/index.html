@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hello Neighbor Mod Kit — большая база знаний</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+<div class="header-inner">
+<div class="logo"><div class="logo-badge">🏠</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions">
+<a class="btn" href="../index.html" title="English version">EN 🇬🇧</a>
+<button class="btn" id="themeToggle">☀️ Светлая</button>
+<button class="btn hamburger" id="burger">☰ Меню</button>
+</div>
+</div>
+</header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+<div class="mini">Mod Kit = Unreal Engine 4.20.3.<br>Инструкции проверены по Steam-гайдам, ModDB и Hello Neighbor Wiki.</div>
+</aside>
+<main class="content">
+<div class="hero">
+<h1>Hello Neighbor Mod Kit — большая база знаний</h1>
+<p>Пошаговый справочник на русском языке: от первого запуска редактора до своей карты, головоломок, воды с акулой, дня и ночи, своих моделей и замены Соседа. Каждый урок — это инструкция «куда нажать», а не общие слова.</p>
+<div class="badges">
+<span class="badge">Unreal Engine 4.20.3</span>
+<span class="badge orange">Без сервера — открывается локально</span>
+<span class="badge green">11 разделов • от новичка до про</span>
+<span class="badge">Steam • ModDB • Wiki</span>
+</div>
+</div>
+
+<div class="toc">
+<h2>📑 Что внутри сайта</h2>
+<ol>
+<li><a href="#start">С чего начать и что нужно установить</a></li>
+<li><a href="#map">Чему вы научитесь: карта навыков</a></li>
+<li><a href="#lessons">Все уроки курса</a></li>
+<li><a href="#versions">Важно про версии Mod Kit</a></li>
+<li><a href="#route">Маршрут обучения</a></li>
+<li><a href="#faq">Частые вопросы новичка</a></li>
+</ol>
+</div>
+
+<div class="article">
+<h2 id="start">С чего начать и что нужно установить</h2>
+<p><b>Actor</b> — любой объект, который можно разместить на уровне: стена, лампа, дверь, триггер.</p>
+<p><b>Component</b> — часть Actor, отвечающая за функцию: модель (Static Mesh), столкновение (Collision), свет, звук.</p>
+<p>Чтобы повторять уроки, вам понадобится:</p>
+<ul>
+<li><b>Epic Games Launcher</b> + <b>Hello Neighbor Mod Kit</b> (вкладка Modding / поиск «Hello Neighbor Mod Kit»). Размер ~13 ГБ, движок <b>Unreal Engine 4.20.3</b>.</li>
+<li><b>Игра Hello Neighbor в Steam</b> — нужна для запуска и загрузки модов из Workshop. Сам Mod Kit запускается из Epic Launcher кнопкой <b>Launch</b>.</li>
+<li>ПК с Windows 10/11, минимум 8 ГБ ОЗУ (лучше 16 ГБ), видеокарта с поддержкой DirectX 11.</li>
+<li>Желательно мышь с колесом — без неё крайне неудобно летать по Viewport.</li>
+</ul>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Установка Mod Kit правильно</h4></div>
+<p>1. Установите Epic Games Launcher, создайте аккаунт.<br>2. Откройте раздел <code>Unreal Engine → Modding</code> или вбейте в поиск <code>Hello Neighbor Mod Kit</code>.<br>3. Нажмите Install, выберите диск с запасом 20+ ГБ.<br>4. После установки нажмите <b>Launch</b>. Первый запуск долгий — компилируются шейдеры, это нормально.<br>5. При создании мода используйте <code>Edit → Plugins → New Plugin</code>, как описано в гайде ModDB «Hello Neighbor Modding Guide». Свой уровень и ассеты держите <b>внутри папки плагина</b>, иначе мод не упакуется.</p>
+</div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Как играть и делиться модом</h4></div>
+<p>В Mod Kit нажмите <b>Play (Alt+P)</b> для теста. Для публикации: <code>Edit → Plugins → найдите свой плагин → Package</code>, затем <b>Upload to Steam Workshop</b> (нужен запущенный Steam с купленной игрой). Игроки подписываются на мод в Workshop игры (App 521890) — мод появится в игре. Альтернатива — .zip с .pak из ModDB.</p>
+</div>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: не путайте UE5 и Mod Kit</strong><p>Многие уроки в интернете — для Unreal Engine 5 (Lumen, Nanite, Sky Atmosphere по-новому). Mod Kit — это <b>UE 4.20.3</b>: там нет Lumen, World Partition, Enhanced Input. Если видите в туториале ноды которых нет — ищите аналог для 4.20, мы везде даём такие пометки.</p></div></div>
+
+<h2 id="map">Чему вы научитесь: карта навыков</h2>
+<p>Сайт ведёт человека, который впервые открыл редактор, по цепочке: <b>карта → дом → головоломки → Blueprint → атмосфера → свои модели → свой Сосед</b>.</p>
+<div class="table-wrap"><table>
+<tr><th>Навык</th><th>Где учим</th><th>Результат</th></tr>
+<tr><td>Создавать карты, рельеф, освещение</td><td><a href="basics.html">Основы карты</a></td><td>Уровень с небом, светом, холмами и дорогой</td></tr>
+<tr><td>Строить дома, ставить мебель</td><td><a href="building.html">Строительство</a></td><td>Двухэтажный дом без щелей и с коллизией</td></tr>
+<tr><td>Делать двери, ключи, ключ-карты, доски и лом</td><td><a href="puzzles.html">Головоломки</a></td><td>Цепочка «ключ → шкаф → лом → доски → карта → дверь»</td></tr>
+<tr><td>Создавать воду, акулу, слив воды</td><td><a href="water.html">Вода и акула</a></td><td>Бассейн с хищником и вентилем слива</td></tr>
+<tr><td>Понимать Blueprint с нуля</td><td><a href="blueprints-basic.html">Blueprint: основы</a></td><td>Куб, который прячется от игрока</td></tr>
+<tr><td>День/ночь, таймеры, текст на экране</td><td><a href="day-night.html">День и ночь</a></td><td>Сутки за 5 минут + подсказки через Widget</td></tr>
+<tr><td>Импортировать FBX, делать материалы и BP-предметы</td><td><a href="custom-assets.html">Свои модели</a></td><td>Телевизор с кнопкой вкл/выкл</td></tr>
+<tr><td>Связывать Blueprint, массивы, enum, электричество</td><td><a href="blueprints-advanced.html">Продвинутые Blueprint</a></td><td>Генератор → лампы + электрозамок</td></tr>
+<tr><td>Заменять Соседа своей моделью</td><td><a href="custom-neighbor.html">Свой сосед</a></td><td>Копия Соседа с новым телом, но родным AI</td></tr>
+</table></div>
+
+<h2 id="lessons">Все уроки курса</h2>
+<p>Порядок — от простого к сложному. Сложность честная: <b>★ легко, ★★ средне, ★★★ сложно</b>.</p>
+<div class="grid">
+<div class="card"><h3><a href="basics.html">1. Основы карты: небо, свет и рельеф</a></h3><div class="meta"><span class="difficulty d-easy">★ Легко</span><span class="badge">~45 мин</span></div><p>Научитесь: создавать уровень, летать по Viewport, ставить Directional/Sky Light, Sky Atmosphere, Fog, Post Process, делать Landscape с холмом и дорогой.</p><p><b>Внутри:</b> горячие клавиши WASD/QE, Static/Stationary/Movable, Build Lighting, «почему проваливаюсь сквозь землю».</p><a class="card-link" href="basics.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="building.html">2. Объекты и строительство дома</a></h3><div class="meta"><span class="difficulty d-easy">★ Легко</span><span class="badge">~60 мин</span></div><p>Научитесь: искать Static Mesh, двигать/вращать/масштабировать, Snap, Pivot, строить двухэтажный дом из готовых ассетов и с нуля.</p><p><b>Внутри:</b> Collision, Materials, Mobility, LOD, борьба со щелями.</p><a class="card-link" href="building.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="puzzles.html">3. Головоломки: двери, ключи, карты, доски и лом</a></h3><div class="meta"><span class="difficulty d-mid">★★ Средне</span><span class="badge">~90 мин</span></div><p>Научитесь: дверь на Timeline, проверка HasKey/IsLocked, красный/синий/зелёный ключи, электронный замок с лампой, доски + лом.</p><p><b>Внутри:</b> полная цепочка из 6 этапов, разбор каждой ноды.</p><a class="card-link" href="puzzles.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="water.html">4. Вода, акула и слив воды</a></h3><div class="meta"><span class="difficulty d-mid">★★ Средне</span><span class="badge">~60 мин</span></div><p>Научитесь: бассейн с материалом воды, Post Process под водой, акула на Trigger + MoveTo, вентиль слива через Timeline и WaterDrained.</p><p><b>Внутри:</b> честно про ограничения AI в Mod Kit.</p><a class="card-link" href="water.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="blueprints-basic.html">5. Blueprint для новичков</a></h3><div class="meta"><span class="difficulty d-easy">★ Легко</span><span class="badge">~70 мин</span></div><p>Научитесь: Actor/Component/Event/Variable, цвета проводов (bool/integer/float/string/vector), 16 главных нод с примерами и ошибками.</p><p><b>Внутри:</b> практика «куб убегает от игрока».</p><a class="card-link" href="blueprints-basic.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="day-night.html">6. День, ночь, таймеры и текст</a></h3><div class="meta"><span class="difficulty d-mid">★★ Средне</span><span class="badge">~50 мин</span></div><p>Научитесь: вращать солнце по Timeline, 3 режима суток, Print String vs UMG Widget, подсказки «Нужен красный ключ / Нажми E».</p><p><b>Внутри:</b> создание Widget Blueprint с нуля.</p><a class="card-link" href="day-night.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="custom-assets.html">7. Свои 3D-модели и Blueprint-объекты</a></h3><div class="meta"><span class="difficulty d-hard">★★★ Сложно</span><span class="badge">~80 мин</span></div><p>Научитесь: готовить FBX (масштаб, Pivot, UV), импортировать текстуры (BaseColor/Normal/Roughness), делать Material и Collision, телевизор с экраном.</p><p><b>Внутри:</b> почему модель розовая или сквозь неё проходят.</p><a class="card-link" href="custom-assets.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="blueprints-advanced.html">8. Продвинутые Blueprint</a></h3><div class="meta"><span class="difficulty d-hard">★★★ Сложно</span><span class="badge">~90 мин</span></div><p>Научитесь: Direct/Cast/Interface/Dispatcher, Functions, Custom Event, Array дверей, Struct ключей, Enum двери, система «генератор → лампы → дверь».</p><p><b>Внутри:</b> архитектура электричества, честно про Save.</p><a class="card-link" href="blueprints-advanced.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="custom-neighbor.html">9. Как заменить соседа</a></h3><div class="meta"><span class="difficulty d-pro">★★★ Pro</span><span class="badge">~40 мин</span></div><p>Научитесь: Skeletal Mesh/Skeleton/Rig, дочерний Blueprint Соседа, замена меша без ломки AI, диагностика T-Pose и масштаба.</p><p><b>Внутри:</b> Retargeting и Bone Mapping простыми словами.</p><a class="card-link" href="custom-neighbor.html">Открыть урок →</a></div>
+<div class="card"><h3><a href="troubleshooting.html">10. Частые ошибки Mod Kit</a></h3><div class="meta"><span class="difficulty d-easy">Справочник</span><span class="badge">17 ошибок</span></div><p>Научитесь: чинить невидимость, Accessed None, Cast Failed, Infinite Loop, тёмный свет после Build, T-Pose, лаги. Причина → диагностика → фикс.</p><p><b>Внутри:</b> чек-лист перед упаковкой мода.</p><a class="card-link" href="troubleshooting.html">Открыть справочник →</a></div>
+</div>
+
+<h2 id="versions">Важно про версии Mod Kit</h2>
+<div class="table-wrap"><table>
+<tr><th>Что</th><th>В Mod Kit (UE 4.20.3)</th><th>В современном UE5 (не путать!)</th></tr>
+<tr><td>Небо</td><td><code>Directional Light + Sky Light + Sky Atmosphere + Exponential Height Fog</code>. В старых сборках вместо Sky Atmosphere был <code>Atmospheric Fog</code> — если у вас его нет, это нормально, используйте Sky Atmosphere.</td><td>Sky Atmosphere + Volumetric Clouds + Lumen. Вам это не нужно.</td></tr>
+<tr><td>Свет Mobility</td><td><code>Static / Stationary / Movable</code> + обязательный <code>Build Lighting</code> для Static/Stationary.</td><td>То же, но Lumen часто избавляет от Build. У вас Build нужен!</td></tr>
+<tr><td>Ввод</td><td>Старый Input: <code>Project Settings → Input → Action Mappings (E, ЛКМ)</code>.</td><td>Enhanced Input с IA_. У вас его нет.</td></tr>
+<tr><td>AI Соседа</td><td>Готовые <code>BP_AreaNeighborHouse / BP_AreaPlayerHouse / BP_GeneralSwitch</code>. Сосед сам находит дом по зонам.</td><td>Нужно строить с нуля. Вам повезло — зоны уже есть.</td></tr>
+<tr><td>Форматы моделей</td><td><code>FBX 2014–2018</code>, текстуры <code>TGA/PNG</code>, материалы через ноды <code>BaseColor / Normal / Roughness</code>.</td><td>Те же FBX, плюс Nanite. Nanite в Mod Kit нет.</td></tr>
+</table></div>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: как не запутаться в названиях</strong><p>Если в уроке для UE5 написано «добавьте Fog → Volumetric», а у вас такого нет — добавьте <code>Exponential Height Fog</code> из вкладки <code>Place Actors → Visual Effects</code>. Принцип тот же, название другое. Мы в каждом уроке даём оба названия, где это важно.</p></div></div>
+
+<h2 id="route">Маршрут обучения (по вечерам)</h2>
+<ul class="checklist">
+<li><b>День 1:</b> index + basics — создайте пустую карту с небом и холмом. Нажмите Play и побегайте.</li>
+<li><b>День 2:</b> building — постройте комнату 4×4 м и второй этаж. Проверьте Collision.</li>
+<li><b>День 3:</b> blueprints-basic — соберите куб, который уезжает от игрока. Поймите Branch и Timeline.</li>
+<li><b>День 4:</b> puzzles — дверь с ключом + доски с ломом. Это ядро Hello Neighbor.</li>
+<li><b>День 5:</b> water + day-night — бассейн с акулой и сутки за 5 минут.</li>
+<li><b>День 6:</b> custom-assets + blueprints-advanced — свой телевизор и генератор с лампами.</li>
+<li><b>День 7:</b> custom-neighbor + упаковка мода в Workshop / .pak.</li>
+</ul>
+
+<h2 id="faq">Частые вопросы новичка</h2>
+<details open><summary>Где брать объекты дома Соседа? Не хочу моделить с нуля</summary><p>В Content Browser Mod Kit ищите папки игры (обычно <code>Content / HelloNeighbor</code>): там Static Mesh стен, дверей, мебели, <code>BP_Door</code>, <code>BP_Key</code>, <code>BP_NeighborCharacter</code>, зоны <code>BP_Area*</code>. Перетаскивайте их на сцену. Свой дом с нуля — второй этап, когда поймёте пропорции.</p></details>
+<details><summary>Я открыл карту, а всё розовое / чёрное. Что делать?</summary><p>Розовое = нет материала/текстуры (см. <a href="troubleshooting.html">ошибки</a>). Чёрное после Build = нет Lightmass Importance Volume или свет Static без запекания. Добавьте <code>Lightmass Importance Volume</code> вокруг дома и перестройте свет на <code>Production</code>.</p></details>
+<details><summary>Blueprint не работает. С чего начать проверку?</summary><p>1) Стоит ли Blueprint на уровне? 2) Event BeginPlay вообще вызывается? (повесьте <code>Print String</code>). 3) Нет ли <code>Accessed None</code>? (поставьте <code>Is Valid</code>). 4) Collision на <code>Overlap</code>, а не <code>Block</code>? Полный чек — в <a href="troubleshooting.html">справочнике ошибок</a>.</p></details>
+<details><summary>Источники: откуда взята информация?</summary><p>Официальный анонс Mod Kit (Unreal Engine Blog, окт. 2017), инструкция «Hello Neighbor Modding Guide» (ModDB, INtense!), серия «Modding Tuto #2–#6» (Gate & Switch, Day-Night, Text Trigger, Door/Boards/Key), Hello Neighbor Wiki (Hello Mod Kit: UE 4.20.3, BP_AreaNeighborHouse, BP_GeneralSwitch), Steam-гайд «How to Download Hello Neighbor Mod Kit». Мы не выдумываем несуществующие ноды: если система зависит от версии — пишем оба варианта.</p></details>
+
+<div class="pager">
+<a href="basics.html"><span>Следующий урок →</span><strong>1. Основы карты: небо, свет и рельеф</strong></a>
+<a href="troubleshooting.html"><span>Застряли?</span><strong>Решение ошибок — справочник</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games. Создано для обучения моддингу • Mod Kit 4.20.3</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

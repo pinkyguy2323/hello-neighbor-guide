@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8. Продвинутые Blueprint — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">⚡</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>8. Продвинутые Blueprint</h1><p>Учим Blueprint общаться: ссылки, Cast, Interface, Dispatcher. Делаем Functions, массивы дверей, структуры ключей, Enum состояний и большую систему «генератор → рубильник → лампы → электрозамок». Плюс честно про сохранения.</p><div class="badges"><span class="badge">★★★ Сложно</span><span class="badge orange">Архитектура</span><span class="badge green">Практика: электричество</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#comm">4 способа связи Blueprint</a></li>
+<li><a href="#func">Functions и Custom Event</a></li>
+<li><a href="#arr">Arrays, Struct, Enum</a></li>
+<li><a href="#save">Сохранения: честно про Mod Kit</a></li>
+<li><a href="#power">Практика: электричество дома</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>Систему из 4 акторов: <code>BP_Generator (бензин + кнопка)</code> → <code>BP_Switch (рубильник)</code> → 3× <code>BP_Lamp (свет)</code> + <code>BP_ElectroDoor (замок)</code>. Пока генератор выкл — лампы не горят, дверь не открывается даже с ключом. Включили — свет, звук, дверь с питанием.</p>
+<h2 id="comm">4 способа связи Blueprint: когда какой</h2>
+<div class="table-wrap"><table><tr><th>Способ</th><th>Как</th><th>Когда</th><th>Пример</th></tr>
+<tr><td><b>Direct Reference</b></td><td>Переменная Object → выбрать актор пипеткой на уровне (Editable, Eye)</td><td>2–3 объекта, связь навсегда (дверь знает свой ключ)</td><td>Дверь.TargetLamp — конкретная лампа</td></tr>
+<tr><td><b>Cast</b></td><td>Cast To классу → Get переменная</td><td>«Ты игрок? Дай HasKey». Жёсткая связь, но простая</td><td>Дверь → Player → HasKey</td></tr>
+<tr><td><b>Blueprint Interface</b></td><td>Общий «договор»: BPI_Interactable с функцией Interact. Кто угодно реализует</td><td>Много разных объектов с одной кнопкой E (дверь, вентиль, ТВ, рубильник)</td><td>E → Line Trace → Interface Interact — один код для всего!</td></tr>
+<tr><td><b>Event Dispatcher</b></td><td>«Радио»: генератор кричит PowerOn, кто подписан — слышит</td><td>Один → многим (генератор → 10 ламп + дверь + ТВ)</td><td>Dispatcher OnPowerChanged(bool) — лампы подписаны</td></tr>
+</table></div>
+<p><b>Правило выбора:</b> 1 дверь + 1 ключ = Direct. Проверка «игрок ли?» = Cast. Кнопка E для всего = Interface. Генератор для всего дома = Dispatcher. Не тащите Cast через всю карту — получите «спагетти» и циклические зависимости.</p>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: Interface за 3 шага</strong><p>1) Content → Add New → Blueprints → Blueprint Interface → BPI_Interact (функция Interact с Input Player). 2) В каждом интерактиве Class Settings → Add Interface. 3) На E: Trace → <code>Does Implement Interface? → Interface Message Interact</code>. Больше никаких Cast к 10 классам!</p></div></div>
+<h2 id="func">Functions и Custom Event</h2>
+<ul>
+<li><b>Function:</b> свой «рецепт» с Inputs/Outputs/Return. Пример <code>TryOpenDoor(Player) → Returns Success(bool)</code>: внутри проверка ключа + Timeline. Локальные переменные живут только внутри функции (временные счётчики).</li>
+<li><b>Custom Event:</b> своя «кнопка» без возврата: <code>PowerOn / PowerOff / Alarm</code>. Вызывается из других Blueprint (Call). С Replicates — для мультиплеера (в Mod Kit почти не нужен).</li>
+<li><b>Когда что:</b> нужно вернуть да/нет или число → Function. Нужно просто «сделай!» → Custom Event / Dispatcher.</li>
+<li><b>Чистота:</b> вынесите в Function всё, что повторяется 2+ раза (проверка ключа, мигание лампы). Имя — глагол: <code>UnlockDoor, DrainWater, SetLampColor</code>.</li>
+</ul>
+<h2 id="arr">Arrays, Struct, Enum на примерах дверей</h2>
+<h3>Array — список</h3>
+<p>Переменная → тип → иконка сетки (Array). <code>Lamps (Array BP_Lamp)</code>: Add 3 лампы пипеткой. <code>ForEachLoop → Set IsPowered</code> — одна нода зажигает все! Полезно: <code>Length, Add, Remove, Contains, Get(index)</code>. Пример: массив дверей подъезда — закрыть все сиреной одним циклом.</p>
+<h3>Struct — карточка объекта</h3>
+<p>Add New → Blueprints → Structure → <code>S_Key</code>: <code>KeyID (int), KeyName (text), KeyColor (linear color), Used (bool)</code>. Теперь ключ — одна переменная-структура вместо 4, а массив <code>Inventory (Array S_Key)</code> — весь рюкзак! <code>Split Struct Pin</code> — развернуть поля, <code>Make Struct</code> — собрать.</p>
+<h3>Enum — состояние</h3>
+<p>Add New → Blueprints → Enumeration → <code>E_DoorState: Locked, Closed, Opening, Open, Closing</code>. В двери переменная State. Переходы: Locked→(ключ)→Closed→(E)→Opening→(Timeline Finished)→Open. Проверка — <code>Equal (Enum)</code> + Switch on Enum. Больше никаких «IsLocked + DoorOpen + IsAnimating» трёх Bool, что противоречат друг другу!</p>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node var">E → <b>Switch on E_DoorState</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node func"><b>Locked:</b> проверить ключ | <b>Closed:</b> Opening+Play TL | <b>Open:</b> Closing+Reverse | Opening/Closing: игнор</div>
+</div></div>
+<h2 id="save">Сохранения: честно про Mod Kit</h2>
+<p>В чистом UE 4.20 есть <code>SaveGame + Save/Load Game to Slot</code> — можно сохранить HasKey, WaterDrained, позиции. Но: <b>в Hello Neighbor Mod Kit упаковка и GameMode кастомизированы под моды/Workshop</b>, оригинальный Сосед хранит AI-память по-своему, а слоты могут не переживать обновление мода. Поэтому: простые флаги (ключи, слив) — сохраняйте смело через SaveGame; полную «память соседа» — не обещайте, тестируйте на упакованном .pak, а не только в PIE. Если Save не завёлся — скажите игрокам честно «уровень проходится за раз», это нормально для мода.</p>
+<h2 id="power">Практика: электричество дома</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Генератор BP_Generator</h4></div><p>Mesh + Trigger + звук тарахтения (Loop). Переменные <code>HasFuel (bool), IsRunning (bool)</code>, Dispatcher <code>OnPowerChanged (bool Powered)</code>. На E: <code>HasFuel? → true: IsRunning=true → Play звук → Call OnPowerChanged(true) → Widget «Генератор запущен»; false: «Нужен бензин! (канистра в сарае)»</code>. Канистра — BP_Pickup, ставит HasFuel=true.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Рубильник BP_Switch</h4></div><p>Подписан на OnPowerChanged. Свой Bool <code>SwitchOn</code> (рычаг). Итоговое питание: <code>Powered = GeneratorRunning && SwitchOn && HasFuel</code>. На E дёргаем SwitchOn → пересчёт → снова Call лампам/двери. Так дверь не откроется при заведённом генераторе, но выключенном рубильнике — как в реальности!</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Лампы и дверь</h4></div><p>BP_Lamp: на OnPowerChanged → <code>Branch Powered → Set Light Visible + Set Emissive 1.0 / 0.0 + звук щелчка</code>. BP_ElectroDoor: та же подписка + своя проверка: <code>E → Branch Powered? → false: «Нет электричества!» (даже с ключом!) → true: дальше обычная проверка ключа из <a href="puzzles.html">урока 3</a></code>. В Mod Kit есть родной <code>BP_GeneralSwitch</code> — если делаете дом Соседа, привяжитесь к нему (Сосед сам его находит!).</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">E на генераторе → <b>HasFuel?</b> → Call <b>OnPowerChanged(true)</b></div><div class="bp-arrow">↓ подписаны</div>
+<div class="bp-node func">Switch: <b>Running && SwitchOn</b> → Lamp: <b>свет вкл</b> → Door: <b>Powered=true</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node var">E на двери: <b>Powered && HasKey → открыть</b></div>
+</div></div>
+<div class="alert alert-important"><div class="ico">⚡</div><div><strong>Важно: архитектура, а не спагетти</strong><p>Лампы не должны Cast к генератору каждая. Генератор кричит в Dispatcher, лампы слушают. Добавить 10-ю лампу = подписать, а не переписывать генератор. Это и есть «архитектура системы».</p></div></div>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>Без бензина — «Нужен бензин», с бензином — тарахтит, лампы горят.</li>
+<li>Рубильник выкл — лампы гаснут, дверь «Нет электричества».</li>
+<li>Interface E работает и на двери, и на вентиле, и на ТВ без Cast.</li>
+<li>Enum двери не даёт открыть Opening повторно.</li>
+</ul>
+<details><summary>Dispatcher никого не будит</summary><p>Забыли Bind Event на BeginPlay ламп/двери. Bind — один раз при старте, Call — при смене питания. Проверьте синий пин Target привязан.</p></details>
+<details><summary>Циклическая зависимость (Cyclic)</summary><p>Дверь Cast к лампе, лампа Cast к двери. Разорвите через Interface/Dispatcher — они не требуют жёстких ссылок.</p></details>
+<div class="pager">
+<a href="custom-assets.html"><span>← Назад</span><strong>7. Свои модели</strong></a>
+<a href="custom-neighbor.html"><span>Следующий урок →</span><strong>9. Свой сосед</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9. Как заменить соседа — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🧍</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>9. Как заменить соседа своей моделью</h1><p>Самый простой безопасный способ: оставляем родной AI Соседа, меняем только тело. Разбираем Skeletal Mesh, Skeleton, Retargeting и чиним T-Pose, масштаб и «провал под землю». Основано на NeighborModKit (ModDB) и Hello Neighbor Wiki.</p><div class="badges"><span class="badge">★★★ Pro</span><span class="badge orange">Без ломки AI</span><span class="badge green">10 шагов + диагностика</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем + дисклеймер</a></li>
+<li><a href="#dict">Словарь: Skeletal Mesh, Skeleton, Rig</a></li>
+<li><a href="#import">Импорт персонажа</a></li>
+<li><a href="#compat">Почему нельзя просто подменить тело</a></li>
+<li><a href="#swap">Замена внешнего вида: 10 шагов</a></li>
+<li><a href="#diag">Если анимации сломались: 6 диагнозов</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем + дисклеймер</h2>
+<p>Создадим <b>дочерний Blueprint</b> от <code>BP_NeighborCharacter</code> (оригинал не трогаем!), назначим свой Skeletal Mesh, проверим Skeleton и Animation Blueprint, поставим на уровень с зонами <code>BP_AreaNeighborHouse</code> и протестируем погоню.</p>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: метод не гарантирован для всех сборок</strong><p>Mod Kit обновлялся (4.18 → 4.19.1 → 4.20.3), имена Blueprint и структура Skeleton могли отличаться. Если у вас нет <code>BP_NeighborCharacter</code> с таким именем — ищите поиском <code>Neighbor* / AI* / Enemy*</code>. Принцип (дочерний класс + тот же Skeleton) одинаков везде, детали — смотрите в своей сборке.</p></div></div>
+<h2 id="dict">Словарь</h2>
+<div class="table-wrap"><table><tr><th>Термин</th><th>Простыми словами</th></tr>
+<tr><td><b>Skeletal Mesh</b></td><td>Модель с костями внутри (персонаж), умеет гнуться. Static Mesh — статуя, Skeletal — человек</td></tr>
+<tr><td><b>Skeleton Asset</b></td><td>Набор костей (бедро → голень → стопа). Один Skeleton — много моделей с одинаковыми костями</td></tr>
+<tr><td><b>Rig / Bones</b></td><td>Сами кости + как они гнутся. Художник красит веса (Skin Weights): какая вершина за какой костью тянется</td></tr>
+<tr><td><b>Animation Blueprint</b></td><td>Логика «когда играть ходьбу/бег/поймал». Берёт скорость AI и включает нужную анимацию</td></tr>
+<tr><td><b>Retargeting / Bone Mapping</b></td><td>Пересадка анимаций с одного скелета на другой («эта кость = та кость»). Работает идеально только на одинаковых скелетах</td></tr>
+</table></div>
+<h2 id="import">Импорт персонажа</h2>
+<ul>
+<li>Blender: модель в <b>A-Pose/T-Pose</b>, кости по именам UE (<code>root, pelvis, spine, head, upperarm_l/r…</code>), Apply Scale/Rotation, рост ~180 см.</li>
+<li>Export FBX: <code>Skeletal Mesh + Skeleton, 2014–2018</code>. Ткани/физику (Cloth) не включайте — 4.20 APEX капризный.</li>
+<li>Import: <code>Skeletal Mesh=true, Import Skeleton (новый или выбрать скелет Соседа! — см. ниже), Import Materials=false, Normal Import Method=Import Normals</code>. Материалы назначьте свои (см. <a href="custom-assets.html">урок 7</a>).</li>
+</ul>
+<h2 id="compat">Почему нельзя просто подменить тело</h2>
+<p>Анимации записаны под <b>конкретный Skeleton</b> (длины костей, имена, иерархия). Чужая модель с другим скелетом = руки из спины. Варианты:</p>
+<ul>
+<li><b>Идеально:</b> ваша модель на <b>том же Skeleton</b>, что Сосед (экспорт с его скелетом / Bone Mapping 1-в-1). Все анимации встают сразу.</li>
+<li><b>Хорошо:</b> похожий гуманоид → <code>Retarget Manager → Set up Rig (Humanoid) → Retarget Anim Blueprints</code>. Ходьба ок, пальцы/лицо могут кривиться.</li>
+<li><b>Плохо:</b> четвероногий/монстр с другим числом костей → нужны свои анимации с нуля. Для первого мода не беритесь.</li>
+<li><b>Лайфхак NeighborModKit:</b> готовый Kit с ModDB уже содержит настроенного соседа-заготовку — замените только Mesh, скелет оставьте его.</li>
+</ul>
+<h2 id="swap">Замена внешнего вида: 10 шагов</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Найти Blueprint соседа</h4></div><p>Content Browser → поиск <code>NeighborCharacter / BP_Neighbor / Neighbor</code>. Откройте, посмотрите Components: там <code>Skeletal Mesh (тело) + Capsule Collision + AI Controller ссылка + Animation Blueprint</code>. Запомните имена.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Не ломаем оригинал!</h4></div><p>Оригинал — эталон игры. Правый клик → <code>Create Child Blueprint Class</code> → <code>BP_Neighbor_My</code>. Все правки — только в ребёнке. Сломали? Удалили ребёнка, оригинал цел.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Создаём ребёнка</h4></div><p>Child наследует весь AI. В нём видно те же компоненты, но с жёлтыми стрелками наследования. Не меняйте Capsule и AI — только Mesh.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">4</div><h4>Меняем Skeletal Mesh Component</h4></div><p>Выберите Mesh → Details → Skeletal Mesh → ваша модель. Если список пуст — модель не импортировалась как Skeletal (переимпортируйте с костями).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">5</div><h4>Назначаем свою модель</h4></div><p>Подгоните Location/Rotation меша внутри капсулы (обычно Z -90, чтобы ноги на дне капсулы). Scale 1.0! Не тяните мышью — сломаете пропорции с Collision.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">6</div><h4>Проверяем Skeleton</h4></div><p>Откройте ваш Mesh → Skeleton Tree. Сравните с оригиналом: совпадают имена root/pelvis/spine? Если ваш Skeleton другой — либо переключите Mesh на скелет Соседа (Details → Skeleton → выбрать соседский + Retarget), либо смиритесь с ручным Retarget.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">7</div><h4>Проверяем Animation Blueprint</h4></div><p>В ребёнке Anim Class должен остаться <b>родной соседский</b>. Если поставили None — будет T-Pose. Если ваш скелет другой — продублируйте AnimBP и переназначьте в Retarget Manager.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">8</div><h4>Проверяем материалы</h4></div><p>Назначьте свои материалы на слоты (кожа/рубашка/штаны). Розовый = пустой слот. Сохраните (Compile + Save).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">9</div><h4>Ставим на уровень</h4></div><p>Перетащите <code>BP_Neighbor_My</code> на карту + добавьте зоны <code>BP_AreaNeighborHouse</code> (дом соседа) и <code>BP_AreaPlayerHouse</code> (дом игрока) из Kit — без них AI не понимает территорию (см. Wiki Update 2). Электрика — через <code>BP_GeneralSwitch</code>.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">10</div><h4>Тестируем AI</h4></div><p>Play: пошумите (бег, бросьте предмет), зайдите в дом соседа. Он должен: патрулировать → заметить → погнаться → поймать (кат-сцена/телепорт). Если ходит, но T-Pose — см. диагностику.</p></div>
+<h2 id="diag">Если анимации сломались: 6 диагнозов</h2>
+<details open><summary>T-Pose (руки в стороны, скользит)</summary><p><b>Причина:</b> нет Anim Blueprint или чужой Skeleton без Retarget.<br><b>Фикс:</b> верните родной Anim Class; проверьте Skeleton совпадает; Reimport с правильными костями.</p></details>
+<details><summary>Руки/ноги вывернуты</summary><p><b>Причина:</b> Bone Mapping перепутан (левая кость → правая) или разная длина костей.<br><b>Фикс:</b> Retarget Manager → Humanoid Rig → проверьте каждую кость; Scale модели 1.0.</p></details>
+<details><summary>Модель гигантская / крошечная</summary><p><b>Причина:</b> Blender Unit не см.<br><b>Фикс:</b> переэкспорт Scale 1.0. Не компенсируйте Scale в Blueprint — сломаете Capsule/AI.</p></details>
+<details><summary>Под землёй / по пояс в полу</summary><p><b>Причина:</b> Mesh смещён внутри Capsule.<br><b>Фикс:</b> Mesh Location Z ≈ -половина высоты капсулы (обычно -90). Player Start тут ни при чём — двигаем меш, не капсулу.</p></details>
+<details><summary>AI ходит, но модель не двигается (скользит)</summary><p><b>Причина:</b> AnimBP не получает скорость (чужой Character без нужных переменных).<br><b>Фикс:</b> используйте дочерний класс от родного Соседа, а не чистый Character. Тогда скорость течёт сама.</p></details>
+<details><summary>Анимации не подходят стилистически</summary><p><b>Причина:</b> монстр ходит как бухгалтер.<br><b>Фикс:</b> честно: нужны свои анимации или смириться. Для хоррора T-Pose-монстр иногда даже страшнее — обыграйте светом (см. <a href="day-night.html">ночь</a>).</p></details>
+<h2 id="check">Проверка + советы</h2>
+<ul class="checklist">
+<li>Оригинал не тронут, всё в BP_Neighbor_My.</li>
+<li>Скелет совпадает, AnimBP родной, материалы не розовые.</li>
+<li>На уровне есть обе Area-зоны, сосед патрулирует и ловит.</li>
+<li>Упакованный .pak тестили, а не только PIE.</li>
+</ul>
+<div class="pager">
+<a href="blueprints-advanced.html"><span>← Назад</span><strong>8. Продвинутые Blueprint</strong></a>
+<a href="troubleshooting.html"><span>Следующий урок →</span><strong>Решение ошибок</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

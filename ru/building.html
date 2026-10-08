@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2. Объекты и строительство дома — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🏗️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions"><button class="btn" id="themeToggle">☀️ Светлая</button><button class="btn hamburger" id="burger">☰ Меню</button></div>
+</div></header>
+<div class="layout">
+<aside class="sidebar">
+<h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: ключ, свет, вода…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+</ul></nav>
+<div class="mini" id="progressBadge">Пройдено разделов: 0 / 11</div>
+</aside>
+<main class="content">
+<div class="page-head"><h1>2. Объекты и строительство собственного дома</h1><p>Учимся искать и ставить Static Mesh, разбираем Collision и материалы, строим двухэтажный дом пошагово: пол → стены → окна → лестница → крыша → свет → мебель. Два подхода: из готовых ассетов Mod Kit и полностью свой дом.</p><div class="badges"><span class="badge">★ Легко</span><span class="badge orange">Практика: дом 8×8 м</span><span class="badge green">Без щелей и провалов</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol>
+<li><a href="#what">Что мы сделаем</a></li>
+<li><a href="#search">Как искать и ставить объекты</a></li>
+<li><a href="#sm">Static Mesh простыми словами</a></li>
+<li><a href="#house">Строим двухэтажный дом: 12 шагов</a></li>
+<li><a href="#two">Два подхода: готовый vs свой</a></li>
+<li><a href="#snap">Pivot, Snap, сетка и щели</a></li>
+<li><a href="#check">Проверка + ошибки</a></li>
+</ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="what">Что мы сделаем</h2>
+<p>Построим дом 8×8 м, 2 этажа, с окнами, дверным проёмом, лестницей, крышей и светом в каждой комнате. Поймём, почему стены должны стыковаться по сетке 100 см, а Collision — это не сама стена, а невидимая оболочка вокруг неё.</p>
+<div class="term"><b>Static Mesh</b> — неподвижная 3D-модель: стена, пол, стул. <b>Collision</b> — невидимая форма, которая решает, проходите вы сквозь объект или упираетесь. <b>Pivot</b> — точка, вокруг которой объект вращается и к которой «прилипает» при перетаскивании. <b>Snap</b> — привязка к сетке, чтобы стены вставали ровно.</div>
+<h2 id="search">Как искать и ставить объекты</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Ищем Static Mesh</h4></div><p>Content Browser → строка поиска → вбейте <code>SM_Wall, SM_Floor, SM_Door, SM_Stair, wall, floor</code>. В Mod Kit ищите папки игры (<code>HelloNeighbor / Meshes / House</code> — точное имя зависит от сборки, пользуйтесь поиском). Фильтр <code>Static Mesh</code> уберёт лишнее. Понравилось — <b>перетащите на Viewport</b>, а не двойным кликом (двойной клик откроет редактор меша).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Transform: двигаем точно</h4></div><p>Выберите объект → Details → Transform: <b>Location</b> (X/Y/Z), <b>Rotation</b>, <b>Scale</b>. Для ровного дома ставьте кратные 100: стена длиной 400 см → следующая на +400 по X. В Viewport: <span class="kbd">W</span> — стрелки перемещения, <span class="kbd">E</span> — круги вращения, <span class="kbd">R</span> — кубики масштаба. Угол поворота стен — строго 0/90/180, иначе щели.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Копирование, дублирование, группировка</h4></div><p><b>Ctrl+C / Ctrl+V</b> — копия. <b>Alt + тянуть стрелку</b> — копия со сдвигом (идеально для ряда стен). <b>Ctrl+G</b> — сгруппировать выбранное (дом целиком), <b>Shift+G</b> — разгруппировать. Группу двигайте как одно целое, иначе пол уедет без стен. Для повторяющихся стен используйте Alt-дубликаты — быстрее и ровнее.</p></div>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: привязка к сетке</strong><p>Вверху Viewport иконка магнита → Grid Snap 10 см для мебели, 50–100 см для стен. Вращение — Angle Snap 90°. Без снапа стены встают на 397.3 см и дают щель в 3 мм, в которую виден свет и проваливается взгляд.</p></div></div>
+<h2 id="sm">Static Mesh простыми словами</h2>
+<div class="table-wrap"><table><tr><th>Параметр</th><th>Что значит</th><th>Что поставить новичку</th></tr>
+<tr><td><code>Collision Preset</code></td><td>Проходим или упираемся. <code>BlockAll</code> — стена, <code>OverlapAll</code> — триггер, <code>NoCollision</code> — призрак</td><td>Стены/пол — BlockAll. Декор за стеклом — можно NoCollision</td></tr>
+<tr><td><code>Materials (Element 0,1…)</code></td><td>«Краска» меша. Один меш может иметь 2 материала (стена + плинтус)</td><td>Не трогайте, пока не прошли <a href="custom-assets.html">урок про материалы</a></td></tr>
+<tr><td><code>Mobility (Static/Stationary/Movable)</code></td><td>Можно ли двигать в игре. Дом — Static (быстро + запекается)</td><td>Всё в доме — Static. Дверь на Blueprint — Movable</td></tr>
+<tr><td><code>LOD</code></td><td>Упрощённые версии для дали (меньше треугольников)</td><td>Оставьте Auto. Не отключайте — упадет FPS</td></tr>
+<tr><td><code>Cast Shadow</code></td><td>Отбрасывает ли тень</td><td>Стены — вкл. Мелкий декор внутри — можно выкл для FPS</td></tr>
+</table></div>
+<p><b>Collision бывает:</b> Simple (коробка/капсула вокруг — быстро, для стен), Complex (точно по треугольникам — медленно, для статуй), Custom (свой UCX_ в Blender). Если игрок проходит сквозь стену — у меша нет Simple Collision: откройте меш двойным кликом → сверху <code>Collision → Add Box Simplified Collision → Save</code>.</p>
+<h2 id="house">Строим двухэтажный дом: 12 шагов</h2>
+<p>Размеры: комната 800×800 см, высота этажа 300 см, толщина стен 20 см. Сетка 100 см. Все Location — кратные 100!</p>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Пол первого этажа</h4></div><p>SM_Floor 800×800×20, Location (0,0,0). Collision BlockAll, Mobility Static. Это «ноль» дома — все стены будут от него плясать.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Стены первого этажа</h4></div><p>4 стены 800×300×20: север (0,400,150), юг (0,-400,150), запад (-400,0,150, поворот 90°), восток (400,0,150, поворот 90°). Alt-дублируйте, не создавайте заново. Z=150 потому что высота 300/2.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Углы</h4></div><p>Если стены 800 и стыкуются торцами — углы перекроются. Либо укорачивайте боковые до 760, либо ставьте угловые столбы 20×20×300. Проверьте сверху (вид Top): не должно быть нахлёста зигзагом.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">4</div><h4>Окна</h4></div><p>Два способа: а) стена с готовым проёмом SM_WallWindow из Mod Kit — просто замените целую стену; б) составная: подоконник 0–100 см + перемычка 220–300 см + 2 боковых куска. Проём 150×120 см. Не вырезайте дырки в целой стене масштабом — испортите Collision.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">5</div><h4>Дверной проём</h4></div><p>Оставьте дыру 120×220 см в южной стене (2 куска + перемычка сверху). Саму открывающуюся дверь сделаем в <a href="puzzles.html">уроке головоломок</a> на Blueprint + Timeline. Сейчас — только проём, иначе дверь будет вмурована.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">6</div><h4>Потолок / пол второго этажа</h4></div><p>Плита 800×800×20 на Z=310 (300 высота + 10 половина толщины). Это потолок первого и пол второго одновременно.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">7</div><h4>Лестница</h4></div><p>SM_Stairs из Kit или 10 ступеней 100×25×18 друг над другом со сдвигом 25 см. Уклон ~35°. Обязательно Collision BlockAll каждой ступени + перила (тонкие коробки), иначе падаете. Ширина 120 см.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">8</div><h4>Второй этаж</h4></div><p>Те же 4 стены, но Z=460 (310+150). Оставьте проём для выхода с лестницы 120×250 см в полу (соберите пол из 2 плит с дырой, а не целой!).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">9</div><h4>Крыша</h4></div><p>Простая двускатная: 2 плиты 500×500×15 под углом 30° + торцевые треугольники (или коробки). Конёк на Z≈750. Свес 50 см за стены — иначе дождь (визуально) льёт по стенам. Mobility Static, Cast Shadow вкл.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">10</div><h4>Освещение</h4></div><p>По Point Light в центре каждой комнаты (Intensity 1000, Radius 600, Stationary) + Spot над входом снаружи. См. пресеты в <a href="basics.html">основах</a>. После — Build Lighting.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">11</div><h4>Мебель</h4></div><p>Кровать, стол, шкаф из Kit. Grid Snap 10 см. Шкаф с ключом внутри — задел под <a href="puzzles.html">головоломку</a>. Тяжёлую мебель — Static, стул который можно толкать — Movable + Simulate Physics (осторожно с лагами).</p></div>
+<div class="step"><div class="step-head"><div class="step-num">12</div><h4>Collision-контроль</h4></div><p>Play → обойдите весь дом вплотную к стенам, запрыгните на лестницу, попробуйте выйти сквозь окно/дверь. Нигде не должны проваливаться. Если проходите — у того меша NoCollision (чинится в редакторе меша).</p></div>
+<h2 id="two">Два подхода: готовый vs свой</h2>
+<div class="table-wrap"><table><tr><th></th><th>Дом из готовых объектов Mod Kit</th><th>Полностью собственный дом</th></tr>
+<tr><td>Скорость</td><td>Вечер — и дом готов</td><td>3–7 дней (моделинг + импорт)</td></tr>
+<tr><td>Стиль</td><td>Как в оригинале Hello Neighbor — игрок сразу «дома»</td><td>Уникальный, но риск «пластилина» без опыта</td></tr>
+<tr><td>Collision/LOD</td><td>Уже настроены</td><td>Настраиваете сами (см. <a href="custom-assets.html">импорт</a>)</td></tr>
+<tr><td>Когда брать</td><td>Первый мод, хоррор-карта, учёба</td><td>Свой визуал, портфолио, конкурс</td></tr>
+</table></div>
+<p><b>Рекомендация:</b> первый дом — из готовых. Второй — гибрид: коробка из Kit + свои декор-меши (см. телевизор в <a href="custom-assets.html">уроке 7</a>).</p>
+<h2 id="snap">Pivot, Snap, сетка и щели</h2>
+<ul>
+<li><b>Pivot:</b> у стены должен быть в углу/центре основания. Если Pivot в центре стены — привязка пляшет. Меняется в редакторе меша: <code>Import → Transform → Pivot</code> или правый клик → Pivot Offset в сцене (временно).</li>
+<li><b>Snap:</b> стены — 100 см, мебель — 10 см, поворот — 90°. Кнопки магнита вверху Viewport.</li>
+<li><b>Щели:</b> видны как полоски света. Лечатся снапом + проверкой вида Top + нахлёстом 1–2 см (стена 802 вместо 800 — нахлёст прячет щель, глаз не заметит).</li>
+<li><b>Неправильный Collision:</b> ящик 100 см, а упираетесь за 20 см до него? У него коробка Collision больше модели. Откройте меш → видно красный каркас — пересоздайте Simplified Collision.</li>
+</ul>
+<div class="alert alert-error"><div class="ico">⛔</div><div><strong>Частая ошибка: масштаб стен 1.13</strong><p>Растянули стену мышью «на глаз» — получили Scale 1.137. Следующая стена не стыкуется. Сбросьте Scale в 1.0 и используйте меши нужной длины, либо вбивайте Scale цифрами (1.0 / 2.0).</p></div></div>
+<h2 id="check">Проверка + ошибки</h2>
+<ul class="checklist">
+<li>Вид Top: прямоугольник без дыр и нахлёстов-зигзагов.</li>
+<li>Play: обежали дом снаружи и внутри, поднялись по лестнице, не застряли.</li>
+<li>Build Lighting без «Lighting needs to be rebuilt».</li>
+<li>Группа дома (Ctrl+G) двигается целиком, Pivot у пола.</li>
+</ul>
+<details><summary>Вижу свет сквозь стык стен</summary><p>Щель 1–5 мм. Включите Grid Snap 10, подтяните стену, сделайте нахлёст 2 см. После — пересоберите свет.</p></details>
+<details><summary>Прохожу сквозь пол второго этажа</summary><p>У плиты NoCollision или она из декора. Поставьте BlockAll. Если пол из 2 кусков с дырой под лестницу — проверьте каждый кусок.</p></details>
+<details><summary>Лестница: застреваю на середине</summary><p>Ступени слишком высокие (&gt;25 см) или без перил падаете. Уменьшите высоту, добавьте боковые Collision-стены.</p></details>
+<div class="pager">
+<a href="basics.html"><span>← Назад</span><strong>1. Основы карты</strong></a>
+<a href="puzzles.html"><span>Следующий урок →</span><strong>3. Головоломки</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний. Hello Neighbor © tinyBuild / Dynamic Pixels. Unreal Engine © Epic Games.</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

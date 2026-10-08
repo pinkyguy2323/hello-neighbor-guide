@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2. Building a house — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🏗️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/building.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Building</div><h1>2. Objects &amp; building your house</h1><p>Find Static Meshes, master Transform/Snap, understand Collision, build a 2-floor 8×8 m house in 12 steps. Expanded: measurement cheat-sheet, Kit vs scratch, Pivot/gap science.</p><div class="badges"><span class="badge">Easy</span><span class="badge o">Hands-on</span><span class="badge g">No gaps</span></div></div>
+<div class="toc"><h2>📑 Contents</h2><ol><li><a href="#place">Placing objects</a></li><li><a href="#sm">Static Mesh decoded</a></li><li><a href="#house">12-step house</a></li><li><a href="#two">Kit vs scratch</a></li><li><a href="#snap">Pivot, Snap, gaps</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2 id="place">Placing objects</h2>
+<p>Content Browser → search <code>SM_Wall, SM_Floor, SM_Stair, wall, floor</code> in kit folders. Filter by Static Mesh. <b>Drag</b> into Viewport (double-click opens mesh editor — wrong). Details → Transform: Location/Rotation/Scale — use multiples of 100 for walls (400-long wall → next at +400 X). Viewport: <span class="kbd">W</span> move, <span class="kbd">E</span> rotate, <span class="kbd">R</span> scale (RMB released!). Copy: <span class="kbd">Ctrl</span>+<span class="kbd">C</span>/<span class="kbd">V</span>, <span class="kbd">Alt</span>+drag for rows, <span class="kbd">Ctrl</span>+<span class="kbd">G</span> group.</p>
+<div class="alert at"><div>💡</div><div><strong>Grid snap</strong><p>Magnet icon: 50–100 cm walls, 10 cm furniture, 90° rotation. Without snap you get 397.3 cm walls with 3 mm light leaks.</p></div></div>
+<h2 id="sm">Static Mesh decoded</h2>
+<div class="tablewrap"><table><tr><th>Setting</th><th>Meaning</th><th>Set this</th></tr>
+<tr><td>Collision Preset</td><td>BlockAll = wall, Overlap = trigger, NoCollision = ghost</td><td>Walls/floor BlockAll</td></tr>
+<tr><td>Materials</td><td>Paint slots (wall + skirting = 2)</td><td>Leave until lesson 7</td></tr>
+<tr><td>Mobility</td><td>House = Static (baked, fast). Blueprint door = Movable</td><td>Static everywhere static</td></tr>
+<tr><td>LOD</td><td>Simplified far versions</td><td>Auto, never disable</td></tr>
+<tr><td>Cast Shadow</td><td>Throws shadow?</td><td>Walls on, small decor off for FPS</td></tr></table></div>
+<p>Collision types: Simple (box — fast, walls), Complex (per-triangle — slow, statues), Custom UCX_ from Blender. No Simple = walk-through: open mesh → <code>Collision → Add Box Simplified → Save</code>.</p>
+<h2 id="house">12-step house (800×800, floor 300 high, walls 20 thick, grid 100)</h2>
+<p>1) Floor 800×800×20 at (0,0,0). 2) 4 walls 800×300×20: N (0,400,150), S (0,-400,150), W/E rotated 90°. 3) Corners: shorten sides to 760 or add 20×20×300 posts, check Top view. 4) Windows: use SM_WallWindow from kit or compose (sill 0–100 + lintel 220–300 + sides, hole 150×120). Never scale holes — breaks collision. 5) Door hole 120×220 in south wall (2 pieces + lintel); opening door comes in <a href="puzzles.html">puzzles</a>. 6) Slab 800×800×20 at Z=310 (ceiling+2nd floor). 7) Stairs: kit SM_Stairs or 10 steps 100×25×18 shifted 25 cm, slope ~35°, rails as thin boxes, width 120. 8) 2nd floor walls Z=460, leave 120×250 stair hole (2 slabs with gap, not solid!). 9) Roof: 2 slabs 500×500×15 at 30° + gables, ridge ~750, 50 cm overhang. 10) Lights: Point per room 1000/r600 Stationary + Spot over entrance, then Build. 11) Furniture: bed/table/wardrobe, snap 10, wardrobe hides next key. 12) Collision run: walk the perimeter, climb stairs, try windows — no pass-through.</p>
+<h2 id="two">Kit vs scratch</h2>
+<div class="tablewrap"><table><tr><th></th><th>Kit prefabs</th><th>Full custom</th></tr><tr><td>Speed</td><td>One evening</td><td>3–7 days</td></tr><tr><td>Style</td><td>Authentic HN feel</td><td>Unique, risk of clay look</td></tr><tr><td>Collision/LOD</td><td>Done</td><td>You do it (lesson 7)</td></tr><tr><td>Take when</td><td>First mod, horror map</td><td>Portfolio, contest</td></tr></table></div>
+<p>Recommendation: first house from kit, second hybrid (kit shell + custom decor like the <a href="custom-assets.html">TV</a>).</p>
+<h2 id="snap">Pivot, Snap, gaps</h2>
+<p><b>Pivot</b> should sit at wall corner/base; center pivots misalign snapping. <b>Gaps:</b> light stripes = 1–5 mm miss. Fix with snap + Top view + 1–2 cm overlap (802 wall hides the seam). <b>Fat collision:</b> you stop 20 cm early? Its box is bigger than mesh — recreate Simplified. <b>Scale 1.13:</b> eye-stretched walls never join — reset to 1.0, use correct-length meshes.</p>
+<details><summary>Light through joints / falling through 2nd floor / stuck on stairs?</summary><p>Joints: snap 10 + overlap 2 cm + rebuild light. Floor: check each slab BlockAll. Stairs: step height ≤25 cm + side collision walls.</p></details>
+<div class="pager"><a href="basics.html"><span>← Back</span><strong>1. Map basics</strong></a><a href="puzzles.html"><span>Next →</span><strong>3. Puzzles</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/building.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

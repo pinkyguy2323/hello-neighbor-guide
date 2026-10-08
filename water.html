@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4. Water, shark & drain — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🦈</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="community.html">Community</a><a href="hosting.html">Free hosting</a></nav>
+<div class="top-actions"><a class="lang" href="ru/water.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 13</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Water</div><h1>4. Water, shark &amp; drain puzzle</h1><p>Pool 10×6×2 m, translucent Panner water, underwater Post, wading-slow player, Trigger shark with Clamp, 8-sec valve drain + WaterDrained. Honest: no built-in swimming in 4.20.3 — we fake it well.</p><div class="badges"><span class="badge">Medium</span><span class="badge o">Fan favorite</span><span class="badge g">Valve finale</span></div></div>
+<div class="toc"><h2>📑 Contents</h2><ol><li><a href="#pool">Pool &amp; water material</a></li><li><a href="#swim">Player in water</a></li><li><a href="#shark">Shark AI (simple, works)</a></li><li><a href="#drain">Drain puzzle</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2 id="pool">Pool &amp; water material</h2>
+<p>Bowl: floor 1000×600×20 + 4 walls 200 high, water at 150. Tile material Roughness .3, BlockAll, steps + treasure keycard at bottom. Surface: Plane 1000×600 at water Z, <code>NoCollision</code> (or Jesus-walk bug!), Cast Shadow false, Movable (for drain). Material <code>M_MyWater</code>: <code>Translucent, Opacity .5–.7, BaseColor light blue, Roughness .1, Metallic .1, Normal wave via Panner speed .05</code> (+ second Panner opposite for ripple). Underwater: Post Process Volume sized to bowl (Unbound=false): blue tint, Saturation 1.2, Exposure .9. Second global Post (Unbound=true) = normal grade. Never swap them.</p>
+<div class="tablewrap"><table><tr><th>Param</th><th>Start</th></tr><tr><td>Opacity</td><td>.55 — bottom + shark shadow visible</td></tr><tr><td>Roughness</td><td>.05–.15 mirror ↔ .5 murky</td></tr><tr><td>Panner</td><td>.03–.08 slow wave</td></tr><tr><td>Depth</td><td>150 cm chest-high scary</td></tr></table></div>
+<h2 id="swim">Player in water: 3 options</h2>
+<p><b>A — wading (use this):</b> Trigger Volume in pool → <code>Max Walk Speed 400→150</code> on enter, restore on exit. Cheap, works. <b>B — fake swim:</b> Gravity Scale .3 + Fly while inside (4.20 Character can Swim but no anims — standing pose). <b>C — honest no:</b> full GTA swimming with anims doesn't exist in Mod Kit. Say “wading with slow” — truth. Bonus fear: <code>Apply Damage 5 every 2s</code> inside until drained — player rushes to valve.</p>
+<h2 id="shark">Shark AI (simple, works)</h2>
+<p><code>BP_Shark</code>: mesh (or cone placeholder first!) + Agro Sphere 1200 + Attack Box 150. Vars: <code>Chasing?, SharkActive=true, Home, Speed 300</code>. Patrol: Timeline 6s Loop Lerp A(−400)→B(400) + yaw. Agro: <code>BeginOverlap → Cast Player → in-water && Active → Chasing=true + Jaws sound</code>; End → false. Skip AI Perception — flaky in kit. Chase on Tick: <code>Chasing && Active && !WaterDrained → Dir = Player−Shark (Z=0) → Normalize × Speed × DeltaTime → SetActorLocation + LookAt yaw</code>. <b>Clamp X/Y to pool every Tick</b> or lag teleports the shark onto the lawn. Z = depth const (bottom+80). Attack: small Box → <code>Apply Damage 50 + Launch + bite sound + 2s cooldown</code>. Player exits (EndOverlap or Z above water): <code>Chasing=false → Timeline home → patrol</code>.</p>
+<div class="bp"><div class="bp-row">
+<div class="bnode ev">Tick → Branch [Chasing && Active && !Drained]</div><div class="barr">↓</div>
+<div class="bnode fn">Dir → Normalize × Speed × DeltaTime → SetActorLocation (Clamped) + yaw</div><div class="barr">↓</div>
+<div class="bnode br">Attack Box → Damage + Launch + 2s cooldown</div>
+</div></div>
+<div class="alert ai"><div>⚠️</div><div><strong>Bounds!</strong><p>Clamp e.g. X ±450, Y ±250 for your pool. Without DeltaTime speed depends on FPS.</p></div></div>
+<h2 id="drain">Drain puzzle: valve → 8s → safe</h2>
+<p><code>BP_Valve</code>: torus mesh + trigger, <code>WaterLevel 1→0, WaterDrained?</code>. E: <code>DoOnce → Play TL_Drain 8s + squeak/water sound + handle 0→720°</code>. Update: <code>WaterLevel=Lerp → Plane Z = bottom + Level×150 + Opacity fade → &lt;.05 = Drained</code>. Also lower/disable the water Post at end. On Drained (Dispatcher or direct ref): <code>SharkActive=false, Chasing=false → thrash anim (Roll ±20° 2s) → Stop → passage lid BlockAll→NoCollision → reveal key + Print “Drained! Safe.”</code> Second E does nothing (DoOnce). WaterDrained is also read by damage tick, shark Tick, Widget hint.</p>
+<div class="bp"><div class="bp-row">
+<div class="bnode ev">E on valve → DoOnce → Play TL_Drain 8s</div><div class="barr">↓ Update</div>
+<div class="bnode fn">WaterLevel 1→0 → Set water Z + Opacity</div><div class="barr">↓ Finished</div>
+<div class="bnode vr">WaterDrained=true → Shark off → open passage</div>
+</div></div>
+<details><summary>Walk on water / shark flies / no drain / still bites?</summary><p>Plane BlockAll → NoCollision. Shark: lock Z + Clamp + DeltaTime. No drain: Plane must be Movable + Update wired. Bites after: gate Tick with NOT Drained + set SharkActive=false.</p></details>
+<div class="pager"><a href="puzzles.html"><span>← Back</span><strong>3. Puzzles</strong></a><a href="blueprints-basic.html"><span>Next →</span><strong>5. Blueprint basics</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • <a href="ru/water.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>
