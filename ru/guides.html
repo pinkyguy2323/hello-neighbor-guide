@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гайды игроков — добавить свой урок — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">📝</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions">
+<a class="btn" href="../guides.html" title="English version">EN 🇬🇧</a>
+<button class="btn" id="themeToggle">☀️ Светлая</button>
+<button class="btn hamburger" id="burger">☰ Меню</button>
+</div></div></header>
+<div class="layout">
+<aside class="sidebar"><h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: спавн, меню, звук…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+<li><a href="spawn-acts.html"><span class="nav-num">10</span>Спавн в акты (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nav-num">11</span>Действия с предметом</a></li>
+<li><a href="custom-menu.html"><span class="nav-num">12</span>Меню мода</a></li>
+<li><a href="guides.html"><span class="nav-num">✎</span>Гайды игроков</a></li>
+</ul></nav><div class="mini" id="progressBadge">Пройдено разделов: 0 / 15</div></aside>
+<main class="content">
+<div class="page-head"><h1>📝 Гайды игроков — настоящая вики: добавь свой без гита</h1><p>Опубликуй полный урок прямо здесь, как в Википедии: заголовок, шаги, теги. Сохраняется мгновенно, видно всем после хостинга + ключей облака в <code>config.js</code> (<code>hn_userguides</code>). База общая для RU и EN — указывай язык.</p><div class="badges"><span class="badge green" id="ugStatus">Режим: определяется…</span><span class="badge">RU + EN общие</span></div></div>
+<div class="article">
+<h2>Гайды</h2>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+<input id="ugq" type="text" placeholder="Фильтр: акула, меню, F…" style="flex:2;min-width:160px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:#fff">
+<select id="ugcat" style="flex:1;min-width:130px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:9px;color:#fff">
+<option value="">Все темы</option><option>Map</option><option>Building</option><option>Puzzles</option><option>Water</option><option>Blueprint</option><option>DayNight</option><option>Assets</option><option>Advanced</option><option>Neighbor</option><option>Spawn</option><option>Interaction</option><option>Menu</option><option>Other</option>
+</select>
+<select id="uglang" style="flex:1;min-width:120px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:9px;color:#fff">
+<option value="all">Все языки</option><option value="ru">RU</option><option value="en">EN</option>
+</select>
+<button class="btn" id="ugexport">⬇ Экспорт</button>
+<label class="btn" style="cursor:pointer">⬆ Импорт <input id="ugimport" type="file" accept=".json" style="display:none"></label>
+</div>
+<div id="uguides"><p style="color:var(--muted)">Загрузка…</p></div>
+<h2 style="margin-top:26px">Опубликовать свой гайд</h2>
+<form id="ugform" class="form-grid" style="display:grid;gap:10px">
+<input id="ugtitle" type="text" maxlength="140" placeholder="Заголовок — напр. Тихий горн за 5 шагов" required style="background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:#fff">
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<input id="ugauthor" type="text" maxlength="40" placeholder="Ник (необязательно)" style="flex:1;min-width:130px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:#fff">
+<select id="uglang2" style="flex:1;min-width:110px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px;color:#fff"><option value="ru">RU</option><option value="en">EN</option></select>
+<select id="ugcat2" style="flex:1;min-width:120px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px;color:#fff"><option>Map</option><option>Building</option><option>Puzzles</option><option>Water</option><option>Blueprint</option><option>DayNight</option><option>Assets</option><option>Advanced</option><option>Neighbor</option><option>Spawn</option><option>Interaction</option><option>Menu</option><option>Other</option></select>
+<select id="ugdiff" style="flex:1;min-width:110px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px;color:#fff"><option>Легко</option><option>Средне</option><option>Сложно</option></select>
+<input id="ugtags" type="text" maxlength="140" placeholder="теги через запятую" style="flex:2;min-width:150px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:#fff">
+</div>
+<textarea id="ugbody" maxlength="6000" placeholder="Шаги: 1) … 2) … Ноды: … Проверка: … Ошибки: …" required style="min-height:110px;background:#0f1319;border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:#fff"></textarea>
+<button class="btn btn-primary" type="submit" style="background:linear-gradient(135deg,#1f7ad6,#3ba7ff);border:1px solid #3ba7ff;color:#fff;border-radius:10px;padding:10px;font-weight:700;cursor:pointer">Опубликовать гайд</button>
+<p style="font-size:13px;color:var(--muted)">Хороший гайд = цель, шаги с путями меню, имена нод, чек проверки, 2–3 ошибки. В демо без аккаунта; для публичного — Auth/RLS (см. хостинг EN-версии).</p>
+</form>
+<div class="pager" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+<a href="custom-menu.html" style="flex:1;min-width:220px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:13px 15px"><span>← Назад</span><br><strong>12. Меню мода</strong></a>
+<a href="index.html" style="flex:1;min-width:220px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:13px 15px"><span>На главную →</span><br><strong>База знаний</strong></a>
+</div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний • чужой контент принадлежит авторам • общая база hn_userguides</footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="userguides.js"></script>
+</body>
+</html>

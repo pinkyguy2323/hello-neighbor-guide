@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11. Свои действия предметов: ЛКМ с предметом в руках — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">🖱️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions">
+<a class="btn" href="../custom-interaction.html" title="English version">EN 🇬🇧</a>
+<button class="btn" id="themeToggle">☀️ Светлая</button>
+<button class="btn hamburger" id="burger">☰ Меню</button>
+</div></div></header>
+<div class="layout">
+<aside class="sidebar"><h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: спавн, меню, звук…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+<li><a href="spawn-acts.html"><span class="nav-num">10</span>Спавн в акты (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nav-num">11</span>Действия с предметом</a></li>
+<li><a href="custom-menu.html"><span class="nav-num">12</span>Меню мода</a></li>
+<li><a href="guides.html"><span class="nav-num">✎</span>Гайды игроков</a></li>
+</ul></nav><div class="mini" id="progressBadge">Пройдено разделов: 0 / 15</div></aside>
+<main class="content">
+<div class="page-head"><h1>11. Свой функционал предметам — ЛКМ с предметом в руках</h1><p>Держите свой предмет, жмёте <b>ЛКМ</b> → гудок, вспышка, бросок, лечение: маппинг Fire, проверка «держу ли» (<code>HasItem + HeldRef + IsValid</code>), звук + кулдаун + эффекты. Приёмы из туто ModDB про Switch и текстовые триггеры + доки UE 4.20.</p><div class="badges"><span class="badge">★★ Средне</span><span class="badge orange">НОВОЕ</span><span class="badge green">ЛКМ = магия</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol><li><a href="#hold">Как работает «в руках»</a></li><li><a href="#fire">Маппинг ЛКМ</a></li><li><a href="#logic">Логика клика: звук + действие</a></li><li><a href="#fx">5 идей функционала</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="hold">Как работает «в руках» в Hello Neighbor</h2>
+<p>Подбор = Overlap → <code>AttachToComponent (HandSocket) + HasItem=true + HeldRef=я</code> (см. <a href="puzzles.html">лом</a>). Выброс = Detach + HasItem=false. Значит «ЛКМ с предметом» = проверка <code>HasItem && IsValid(HeldRef) && HeldRef именно этого класса</code>. Без проверки класса клик с ЛЮБЫМ предметом (и с пустыми руками) будет гудеть — классический баг. HeldRef храните Object Reference в игроке, при выбросе очищайте.</p>
+<h2 id="fire">Маппинг ЛКМ (старый инпут!)</h2>
+<p><code>Project Settings → Input → Action Mappings → Fire = Left Mouse Button</code>. Событие <code>InputAction Fire (Pressed)</code> в PlayerCharacter (именно Pressed, не Axis — Axis спамит). Только 4.20; туториалы UE5 с <code>IA_Fire</code> не подойдут. Тест: сначала Print «клик» на Pressed, потом логика.</p>
+<h2 id="logic">Логика клика: звук + действие</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Проверка: держу ли ЭТО?</h4></div><p>В BP предмета (или в игроке): <code>Fire Pressed → Get Player → HasItem? → HeldRef IsValid? → Cast HeldRef к MyItemClass? да → дальше; нет → ничего (или звук пустого клика)</code>. Логику кладите в ПРЕДМЕТ, если особенный один; в ИГРОКА со Switch по классу, если предметов с ЛКМ много.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Делаем: звук + кулдаун</h4></div><p><code>→ Play Sound at Location (гудок в позиции предмета, не 2D — 2D не знает дистанции) → вспышка (Emissive вкл / Spawn Emitter в сокете) → Do Once + Retriggerable Delay 0.4с (анти-пулемёт) → заряды-- → 0 = сломался (Detach + Destroy + HasItem=false)</code>. Sound Cue из кита или пак ALL SOUNDS PACK с ModDB (кидаете .uasset в <code>HelloNeighbor/Content</code>, потом Migrate в свой мод — совет Zxenook).</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">InputAction Fire → HasItem? → HeldRef валиден? → Cast MyItem?</div><div class="bp-arrow">↓ да</div>
+<div class="bp-node func">Play Sound at Location + вспышка → кулдаун 0.4с → заряды-- → 0 = потрачен</div>
+</div></div>
+<button class="btn bp-toggle" data-bp-toggle="bpi">Показать разбор нод ▼</button>
+<div id="bpi" style="display:none"><div class="bp-detail"><b>Cast HeldRef</b> — проверка личности («именно этот гудок, а не ключ»). <b>At Location vs 2D</b> — Location направленный/громкий рядом (Сосед УСЛЫШИТ! AI придёт проверять — отличный геймплей); 2D = писк интерфейса. <b>Кулдаун</b> — 60 кликов/сек топят звуковой пул. <b>Заряды</b> — int, в ноль → потрачен, как доски.</div></div>
+<h2 id="fx">5 идей функционала (берите одну, потом комбинируйте)</h2>
+<p>1) <b>Горн-пугалка:</b> громкий звук + <code>Make Noise (Loudness 1.0)</code> → Сосед идёт проверять (родной слух AI). 2) <b>Фонарик по клику:</b> Toggle Spot Visible + Emissive (нужен Stationary/Movable, см. приём <a href="custom-assets.html">телевизора</a> с Dynamic Instance). 3) <b>Бросок:</b> Detach + <code>Add Impulse Forward×1500 + HasItem=false</code> (лом-бумеранг!). 4) <b>Использование:</b> заряды-- → <code>лечение / открыть связанную дверь через Interface</code> (<a href="blueprints-advanced.html">урок 8</a>). 5) <b>Комбо:</b> ЛКМ = звук, удержание 1с (время зажатия + Timeline) = мощный залп. Различайте Pressed и Released: заряд на Pressed, сила по времени на Released.</p>
+<details><summary>Стреляет с пустыми руками / нет звука / пулемёт / AI игнорит?</summary><p>Добавьте проверку класса HeldRef. Cue битый → проверьте китовый Cue; Location нужен attenuation. Кулдаун 0.3–0.5с + DoOnce. Для AI: Make Noise / громкий Location рядом с Соседом + зоны Area на месте.</p></details>
+<div class="pager"><a href="spawn-acts.html"><span>← Назад</span><strong>10. Спавн (F)</strong></a><a href="custom-menu.html"><span>Следующий урок →</span><strong>12. Меню мода</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний • Приёмы: туто ModDB Switch/Text, доки UE 4.20 • <a href="../custom-interaction.html">EN version</a></footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

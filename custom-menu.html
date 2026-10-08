@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12. Custom main menu for mods — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">📋</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="guides.html">User guides</a><a href="community.html">Community</a></nav>
+<div class="top-actions"><a class="lang" href="ru/custom-menu.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="spawn-acts.html"><span class="nnum">10</span>Spawn into Acts (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nnum">11</span>Held-item actions</a></li>
+<li><a href="custom-menu.html"><span class="nnum">12</span>Mod main menu</a></li>
+<li><a href="guides.html"><span class="nnum">✎</span>User guides</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 17</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Menu</div><h1>12. Custom main menu for your mod</h1><p>Title screen with Play / How to play / Quit: <code>W_MainMenu</code> UMG widget, OnClicked → Open Level / Remove from Parent, Level Blueprint BeginPlay wiring, menu GameMode, packaging. Follows Epic “Creating a Main Menu” (4.27, same nodes in 4.20) + Reddit modders' Main/Pause menu blueprints.</p><div class="badges"><span class="badge">Medium</span><span class="badge o">NEW</span><span class="badge g">UMG from zero</span></div></div>
+<div class="toc"><h2>📑 Contents</h2><ol><li><a href="#w">Widget layout</a></li><li><a href="#b">Buttons logic</a></li><li><a href="#l">Level wiring + GameMode</a></li><li><a href="#p">Package &amp; pause bonus</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2 id="w">Widget layout (W_MainMenu)</h2>
+<p>Content Browser → <code>Add New → User Interface → Widget Blueprint → W_MainMenu</code>. Designer: <code>Canvas Panel → Background Image (your art, dark + title “MY MOD” 64px) → Vertical Box centered → 3 Buttons (Play / How to Play / Quit) each with Text child 24px, padding 10, names PlayButton/HelpButton/QuitButton</code>. Anchor center, keyboard focus later to PlayButton (gamepad support). Keep fonts default — custom fonts often break cooker in 4.20.</p>
+<h2 id="b">Buttons logic (Graph tab)</h2>
+<p>Select PlayButton → Details → Events → <code>+ On Clicked</code> (repeat for all). <code>OnClicked(Play) → Open Level (your Act copy, e.g. Act1_FSpawn) → Remove from Parent (self)</code>. <code>OnClicked(Help) → Set MainMenu Hidden + HelpPanel Visible</code> (Back reverses). <code>OnClicked(Quit) → Execute Console Command “Quit”</code>. Open Level name must match EXACTLY (case-sensitive!) or you get black screen — #1 menu bug. Compile + Save.</p>
+<div class="bp"><div class="bp-row">
+<div class="bnode ev">OnClicked Play → <b>OpenLevel (Act1_FSpawn)</b> → Remove from Parent</div><div class="barr">↓</div>
+<div class="bnode fn">Help: toggle panels visibility | Quit: <b>Console “Quit”</b></div>
+</div></div>
+<h2 id="l">Level wiring + GameMode</h2>
+<p>Menu needs its own map: <code>File → New → Empty → MenuMap</code> (a black room + camera is fine). Its Level Blueprint: <code>Event BeginPlay → Create Widget (W_MainMenu) → Add to Viewport → Get Player Controller → Set Input Mode UI Only + Set Show Mouse Cursor true</code>. Without UI-Only mode clicks fall through to the game behind the menu. World Settings of MenuMap: <code>GameMode Override = MenuGameMode</code> (duplicate of kit GameMode with default pawn = Spectator/None so nobody runs behind the menu — Epic UMG tutorial pattern). <code>Project Settings → Maps &amp; Modes → Game Default Map = MenuMap</code> + add MenuMap + Act maps to Packaging map list.</p>
+<div class="alert ai"><div>⚠️</div><div><strong>Mod Kit honesty</strong><p>Workshop mods load through the game's mod menu — your MenuMap becomes the mod's entry, not a replacement of the shipping title screen (that needs deeper packaging and can break updates). State in description: “Start mod → my menu → Play”. Reddit modders confirm custom Main/Pause menus work as blueprints; full title-screen replacement is fragile — prefer entry-map menu.</p></div></div>
+<h2 id="p">Package &amp; pause bonus</h2>
+<p>Package plugin with MenuMap included, test packaged (PIE lies about Open Level names!). Pause bonus: <code>Esc Action → Create W_Pause (Resume/Restart/Menu/Quit) → Set Game Paused true + UI Only</code>; Resume → <code>Remove + Unpause + Game Only</code>. Neighbor AI while paused: also <code>Set Global Time Dilation 0? No — use Set Game Paused</code> (dilation breaks Timeline doors).</p>
+<details><summary>Black screen / clicks dead / player runs behind menu?</summary><p>Level name typo (copy-paste exact). Missing UI-Only + cursor. GameMode pawn still spawns runner — override with empty pawn. Widget created twice (BeginPlay double) → gate with DoOnce.</p></details>
+<div class="pager"><a href="custom-interaction.html"><span>← Back</span><strong>11. Held-item</strong></a><a href="guides.html"><span>Next →</span><strong>✎ User guides</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • Epic “Creating a Main Menu”, UE UMG docs • <a href="ru/custom-menu.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

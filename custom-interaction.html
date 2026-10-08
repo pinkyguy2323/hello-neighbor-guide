@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>11. Held-item actions: LMB = sound/function — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">🖱️</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="guides.html">User guides</a><a href="community.html">Community</a></nav>
+<div class="top-actions"><a class="lang" href="ru/custom-interaction.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="spawn-acts.html"><span class="nnum">10</span>Spawn into Acts (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nnum">11</span>Held-item actions</a></li>
+<li><a href="custom-menu.html"><span class="nnum">12</span>Mod main menu</a></li>
+<li><a href="guides.html"><span class="nnum">✎</span>User guides</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 17</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Held-item actions</div><h1>11. Custom functions for custom items — LMB while holding = sound &amp; more</h1><p>Hold your item, click <b>LMB</b> → honk, flash, throw, heal: Fire mapping, held-check (<code>HasItem + AttachedRef + IsValid</code>), trace vs direct call, sound + cooldown + effects. Patterns from ModDB Gate/Switch + Text-trigger tutos and UE 4.20 input docs.</p><div class="badges"><span class="badge">Medium</span><span class="badge o">NEW</span><span class="badge g">LMB = magic</span></div></div>
+<div class="toc"><h2>📑 Contents</h2><ol><li><a href="#hold">How holding works in HN</a></li><li><a href="#fire">LMB mapping</a></li><li><a href="#logic">Click logic: sound + function</a></li><li><a href="#fx">More functions (5 ideas)</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2 id="hold">How holding works in HN</h2>
+<p>HN pickup = Overlap → <code>AttachToComponent (HandSocket) + HasItem=true + HeldRef=self</code> (see <a href="puzzles.html">crowbar</a>). Drop/throw = Detach + HasItem=false. So “LMB while holding” = gate on <code>HasItem && IsValid(HeldRef) && HeldRef == this item class</code>. Without the class check, clicking with ANY item (or empty hands) fires your horn — classic bug. Store HeldRef as Object Reference on the player; clear it on drop.</p>
+<h2 id="fire">LMB mapping (old input!)</h2>
+<p><code>Project Settings → Input → Action Mappings → Fire = Left Mouse Button</code>. Event <code>InputAction Fire (Pressed)</code> in PlayerCharacter (pressed, NOT axis — axis spams). 4.20 only; UE5 <code>IA_Fire</code> tutorials don't apply. Test: Print “click” on Pressed before wiring logic.</p>
+<h2 id="logic">Click logic: sound + function</h2>
+<div class="step"><div class="step-head"><div class="snum">1</div><h4>Gate: am I holding THIS?</h4></div><p>In item BP (or player): <code>Fire Pressed → Get Player → HasItem? → HeldRef IsValid? → Cast HeldRef to MyItemClass? success → continue; fail → nothing (or empty-click sound)</code>. Put logic in the ITEM when one item is special; in PLAYER with Switch/Class check when many items share LMB.</p></div>
+<div class="step"><div class="step-head"><div class="snum">2</div><h4>Do it: sound + cooldown</h4></div><p><code>→ Play Sound at Location (Honk Cue at item pos, not 2D — 2D ignores distance) → muzzle flash (Toggle Emissive / Spawn Emitter at socket) → Do Once + Retriggerable Delay 0.4s (anti-machine-gun) → charges-- → 0 = break (Detach + Destroy + HasItem=false)</code>. Sound Cues from kit or ModDB ALL SOUNDS PACK (drop .uassets into <code>HelloNeighbor/Content</code>, then migrate into your mod — Zxenook tip).</p></div>
+<div class="bp"><div class="bp-row">
+<div class="bnode ev">InputAction Fire → HasItem? → HeldRef valid? → Cast MyItem?</div><div class="barr">↓ yes</div>
+<div class="bnode fn">Play Sound at Location + flash → cooldown 0.4s → charges-- → 0 = consume</div>
+</div></div>
+<button class="btn" data-bp="bpi">Show node breakdown ▼</button>
+<div id="bpi" style="display:none"><p><b>Cast HeldRef</b> — identity check (“this exact horn, not a key”). <b>At Location vs 2D</b> — Location = directional/loud-nearby (Neighbor hears it! AI investigates — great gameplay); 2D = UI beep. <b>Cooldown</b> — 60 clicks/sec melts sound pool. <b>Charges</b> — int with Branch 0 → consume, like boards.</p></div>
+<h2 id="fx">More functions (pick one, then combine)</h2>
+<p>1) <b>Scare-horn:</b> loud sound + <code>Make Noise (Loudness 1.0)</code> → Neighbor investigates (uses native AI hearing). 2) <b>Flashlight click:</b> Toggle Spot Visible + emissive (needs Stationary/Movable, see <a href="custom-assets.html">TV pattern</a> with Dynamic Instance). 3) <b>Throw:</b> Detach + <code>Add Impulse Forward×1500 + HasItem=false</code> (boomerang crowbar!). 4) <b>Heal/use:</b> charges-- → <code>Apply Heal / Open linked door via Interface</code> (<a href="blueprints-advanced.html">lesson 8</a>). 5) <b>Combo:</b> LMB = sound, hold 1s (Button Down time + Timeline) = big blast. Distinguish Pressed vs Released: start charge on Pressed, fire power by hold-time on Released.</p>
+<details><summary>Fires empty-handed / no sound / machine-guns / AI ignores?</summary><p>Add HeldRef class gate. Cue missing → test kit Cue first; Location needs attenuation. Cooldown 0.3–0.5s + DoOnce. AI: use Make Noise / loud Location cue near Neighbor + Area zones present.</p></details>
+<div class="pager"><a href="spawn-acts.html"><span>← Back</span><strong>10. Spawn (F)</strong></a><a href="custom-menu.html"><span>Next →</span><strong>12. Mod menu</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • Patterns: ModDB Switch/Text tutos, UE 4.20 input • <a href="ru/custom-interaction.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

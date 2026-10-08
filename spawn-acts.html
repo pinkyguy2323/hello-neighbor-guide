@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10. Spawn objects into original Acts (F key) — HN Mod Kit EN</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar"><div class="topbar-in">
+<div class="brand"><div class="brand-mark">📥</div><div>HELLO NEIGHBOR<br><small>MOD KIT • EN WIKI</small></div></div>
+<nav class="topnav"><a href="index.html">Home</a><a href="basics.html">Wiki</a><a href="guides.html">User guides</a><a href="community.html">Community</a></nav>
+<div class="top-actions"><a class="lang" href="ru/spawn-acts.html">RU</a><button class="btn" id="themeToggle">☀️ Light</button><button class="btn burger" id="burger">☰ Menu</button></div>
+</div></header>
+<div class="wrap">
+<aside class="side"><h3>Guide navigation</h3><div class="search"><input id="siteSearch" type="text" placeholder="Search…"></div><div class="sres" id="searchResults"></div>
+<nav><ul class="nav" id="navList">
+<li><a href="index.html"><span class="nnum">★</span>Home</a></li>
+<li><a href="basics.html"><span class="nnum">1</span>Map basics</a></li>
+<li><a href="building.html"><span class="nnum">2</span>Building</a></li>
+<li><a href="puzzles.html"><span class="nnum">3</span>Puzzles</a></li>
+<li><a href="water.html"><span class="nnum">4</span>Water &amp; shark</a></li>
+<li><a href="blueprints-basic.html"><span class="nnum">5</span>Blueprint basics</a></li>
+<li><a href="day-night.html"><span class="nnum">6</span>Day &amp; night</a></li>
+<li><a href="custom-assets.html"><span class="nnum">7</span>Custom assets</a></li>
+<li><a href="blueprints-advanced.html"><span class="nnum">8</span>Advanced BP</a></li>
+<li><a href="custom-neighbor.html"><span class="nnum">9</span>Custom Neighbor</a></li>
+<li><a href="troubleshooting.html"><span class="nnum">!</span>Troubleshooting</a></li>
+<li><a href="spawn-acts.html"><span class="nnum">10</span>Spawn into Acts (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nnum">11</span>Held-item actions</a></li>
+<li><a href="custom-menu.html"><span class="nnum">12</span>Mod main menu</a></li>
+<li><a href="guides.html"><span class="nnum">✎</span>User guides</a></li>
+<li><a href="community.html"><span class="nnum">✎</span>Community</a></li>
+<li><a href="hosting.html"><span class="nnum">▲</span>Hosting</a></li>
+</ul></nav><div class="pill" id="progressBadge">Visited: 0 / 17</div></aside>
+<main class="main">
+<div class="pagehead"><div class="crumbs"><a href="index.html">Home</a> / Wiki / Spawn into Acts</div><h1>10. Add your objects into the original Acts — spawn with F</h1><p>Make a mod that, inside the ORIGINAL Acts maps, spawns your object when you press <b>F</b>: Action Mapping, SpawnActor BP, transform in front of player, collision safety, packaging as plugin .pak. Honest limits included — researched from ModDB Modding Guide, Steam/Reddit modders and UE 4.20 docs.</p><div class="badges"><span class="badge">Medium</span><span class="badge o">NEW</span><span class="badge g">F = spawn</span></div></div>
+<div class="toc"><h2>📑 Contents</h2><ol><li><a href="#how">How it really works (no myths)</a></li><li><a href="#prep">Prep: duplicate Act map, don't edit original</a></li><li><a href="#input">F key: Action Mapping</a></li><li><a href="#spawner">Spawner Blueprint</a></li><li><a href="#pack">Package &amp; play</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Expand all</button>
+<h2 id="how">How it really works (no myths)</h2>
+<p>The Mod Kit ships the full game content and mods are UE <b>Plugins</b> (<code>Edit → Plugins → New Plugin</code>, packaged via <code>Package</code> into .pak for Workshop — ModDB “Hello Neighbor Modding Guide”). There is <b>no official “inject any actor into shipped Acts at runtime without touching the map” API</b> in the kit. The reliable community-tested route (ModDB installers guide, Reddit modders) is: <b>duplicate the original Act map into your plugin → add your spawner logic there → package</b>. Players then play YOUR copy of the Act (e.g. <code>Act1_MyMod</code>) with the F-spawn working. Claiming “press F in the untouched Steam Act and my chair appears without any map change” would be false — be honest with players: your mod = modded Act map + plugin content.</p>
+<div class="alert ai"><div>⚠️</div><div><strong>Never overwrite originals</strong><p>Copy, don't move: Content Browser → right-click Act map → Duplicate/Migrate into <code>/Mods/YourMod/Content/Maps/</code>. Originals stay intact for updates and other mods.</p></div></div>
+<h2 id="prep">Prep: duplicate Act map</h2>
+<div class="step"><div class="step-head"><div class="snum">1</div><h4>Find the Act, copy it</h4></div><p>Content Browser → search the Act map (names differ per kit build: <code>Act1 / StartupMap / MainMap</code> — use search, don't guess). Right-click → <b>Duplicate</b> into your plugin Maps folder → rename <code>Act1_FSpawn</code> (Latin, no spaces). Open YOUR copy. Add <code>Player Start</code> check + <code>Lightmass Importance Volume</code> if missing, quick <code>Build → Preview</code> to confirm it runs with <span class="kbd">Alt</span>+<span class="kbd">P</span>.</p></div>
+<div class="step"><div class="step-head"><div class="snum">2</div><h4>Your object to spawn</h4></div><p>Any <code>BP_AmmoBox / SM_Crate</code> or your <a href="custom-assets.html">custom mesh</a>: must have Simple Collision (or it falls through) and Mobility Movable if physics. Keep scale 1.0, origin at base. Test-place one copy by hand first — if the hand-placed one misbehaves, spawned ones will too.</p></div>
+<h2 id="input">F key: Action Mapping (UE 4.20, not UE5 Enhanced Input)</h2>
+<p><code>Edit → Project Settings → Engine → Input → Action Mappings → +</code> → name <code>SpawnObject</code> → key <span class="kbd">F</span> (keep Shift/Alt modifiers off). This is the OLD input system — the kit (4.20.3) has no Enhanced Input, so UE5 tutorials with <code>IA_</code> don't apply. In your Character or Level Blueprint: right-click → <code>InputAction SpawnObject</code> event appears automatically after you add the mapping. If it doesn't appear, compile settings (close/reopen Project Settings) — classic 4.20 quirk.</p>
+<h2 id="spawner">Spawner Blueprint: F → object in front of player</h2>
+<div class="step"><div class="step-head"><div class="snum">3</div><h4>Graph (put in PlayerCharacter or a BP_Spawner placed in the duplicated Act)</h4></div><p><code>InputAction SpawnObject (F) → Branch [CanSpawn? cooldown false] → Get Player Location + Forward Vector × 200 cm + Z +50 → Make Transform → Spawn Actor From Class (your BP, Collision Handling = Adjust If Possible But Always Spawn) → optional Attach/Launch → Set CanSpawn cooldown via Do Once + Retriggerable Delay 0.5s</code>. Forward spawn avoids appearing inside the player (inside-spawn = physics explosion). Always set <b>Collision Handling override</b> or spawns inside walls fail silently.</p></div>
+<div class="bp"><div class="bp-row">
+<div class="bnode ev">InputAction SpawnObject (F)</div><div class="barr">↓</div>
+<div class="bnode fn">Loc + Forward×200 + Z50 → Make Transform → <b>SpawnActor (Adjust Always Spawn)</b></div><div class="barr">↓</div>
+<div class="bnode br">DoOnce + 0.5s cooldown → sound + counter++</div>
+</div></div>
+<button class="btn" data-bp="bps">Show node breakdown ▼</button>
+<div id="bps" style="display:none"><p><b>GetActorForwardVector × 200</b> — spawn point in front of eyes, not inside skull. <b>Spawn Actor From Class</b> — needs Class pin (your BP) + Transform; return value = spawned instance (store for limit, e.g. max 20 then Destroy oldest via Array). <b>Do Once + Delay</b> — anti-spam: holding F at 60 FPS without cooldown = 3600 crates. <b>Play Sound at Location</b> — pop confirmation.</p></div>
+<div class="alert at"><div>💡</div><div><strong>Upgrades</strong><p>Cycle 3 objects per F (Array + index++), spawn costs inventory (Branch HasItem → Remove), spawn only when aiming at ground (Line Trace → Break Hit → use Hit Location).</p></div></div>
+<h2 id="pack">Package &amp; play</h2>
+<p><code>Edit → Plugins → your mod → Package</code> → .pak/zip → Steam Workshop Upload (Steam running, game owned) or ModDB file. Players: subscribe/copy .pak → play YOUR Act copy from the mod menu, press F — object appears. Test packaged build, not just PIE: cooker strips unused assets, so reference your BP from the map (placed spawner) or add to <code>Project Settings → Packaging → List of maps to include</code>. Sources: ModDB Hello Neighbor Modding Guide (plugin/package/play), DrHello installers tuto, UE 4.20 Input + SpawnActor docs, Epic main-menu/UMG docs for flow.</p>
+<details><summary>F does nothing / spawns inside me / crashes / missing in package?</summary><p>No event: mapping name mismatch or old input — re-add + restart editor. Inside me: +200 forward + Z50 + Adjust-Always-Spawn. Crash: null Class pin or infinite spawn on Tick (use Pressed event + cooldown). Missing packaged: hard-reference in map + packaging map list.</p></details>
+<div class="pager"><a href="troubleshooting.html"><span>← Back</span><strong>Troubleshooting</strong></a><a href="custom-interaction.html"><span>Next →</span><strong>11. Held-item actions</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Fan guide • Sources: ModDB Modding Guide, UE 4.20 Input/SpawnActor docs • <a href="ru/spawn-acts.html">RU version</a></footer>
+<button id="toTop">↑</button><script src="script.js"></script>
+</body>
+</html>

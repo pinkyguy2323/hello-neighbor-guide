@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10. Свои объекты в оригинальных актах — спавн по F — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">📥</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions">
+<a class="btn" href="../spawn-acts.html" title="English version">EN 🇬🇧</a>
+<button class="btn" id="themeToggle">☀️ Светлая</button>
+<button class="btn hamburger" id="burger">☰ Меню</button>
+</div></div></header>
+<div class="layout">
+<aside class="sidebar"><h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: спавн, меню, звук…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+<li><a href="spawn-acts.html"><span class="nav-num">10</span>Спавн в акты (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nav-num">11</span>Действия с предметом</a></li>
+<li><a href="custom-menu.html"><span class="nav-num">12</span>Меню мода</a></li>
+<li><a href="guides.html"><span class="nav-num">✎</span>Гайды игроков</a></li>
+</ul></nav><div class="mini" id="progressBadge">Пройдено разделов: 0 / 15</div></aside>
+<main class="content">
+<div class="page-head"><h1>10. Свои объекты в оригинальных актах — спавн по F</h1><p>Делаем мод, который в ОРИГИНАЛЬНЫХ картах актов по нажатию <b>F</b> добавляет ваш объект: Action Mapping, спавнер-Blueprint, точка перед игроком, безопасность Collision, упаковка в .pak. Честно про ограничения — по материалам ModDB, Steam/Reddit-моддеров и доков UE 4.20.</p><div class="badges"><span class="badge">★★ Средне</span><span class="badge orange">НОВОЕ</span><span class="badge green">F = спавн</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol><li><a href="#how">Как это работает на самом деле</a></li><li><a href="#prep">Копия акта, не оригинал</a></li><li><a href="#input">Кнопка F: Action Mapping</a></li><li><a href="#spawner">Спавнер-Blueprint</a></li><li><a href="#pack">Упаковка и игра</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="how">Как это работает на самом деле (без мифов)</h2>
+<p>Моды в Mod Kit — это UE-<b>плагины</b> (<code>Edit → Plugins → New Plugin</code>, упаковка кнопкой <code>Package</code> в .pak для Workshop — гайд ModDB «Hello Neighbor Modding Guide»). Официального API «вживить любой объект в нетронутые акты во время игры, не трогая карту» в ките <b>нет</b>. Надёжный путь, проверенный сообществом (гайд по установщикам DrHello, моддеры Reddit): <b>скопировать карту акта в свой плагин → добавить туда логику спавнера → упаковать</b>. Игроки играют в ВАШУ копию акта (например <code>Act1_MyMod</code>), где F работает. Обещать «нажал F в чистом стим-акте — появился стул без изменения карты» было бы неправдой — честно пишите: мод = модded-копия акта + контент плагина.</p>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: оригиналы не трогаем</strong><p>Только копия: правый клик по карте акта → Duplicate/Migrate в <code>/Mods/ВашМод/Content/Maps/</code>. Оригиналы целы для обновлений и чужих модов.</p></div></div>
+<h2 id="prep">Копия акта, не оригинал</h2>
+<div class="step"><div class="step-head"><div class="step-num">1</div><h4>Находим акт и копируем</h4></div><p>В Content Browser поиском ищем карту акта (имена зависят от сборки: <code>Act1 / StartupMap / MainMap</code> — ищите, не гадайте). Правый клик → <b>Duplicate</b> в папку Maps вашего плагина → имя <code>Act1_FSpawn</code> (латиница, без пробелов). Открываем СВОЮ копию. Проверяем <code>Player Start</code> и <code>Lightmass Importance Volume</code>, жмём <span class="kbd">Alt</span>+<span class="kbd">P</span> — бегаем.</p></div>
+<div class="step"><div class="step-head"><div class="step-num">2</div><h4>Объект для спавна</h4></div><p>Любой <code>BP_AmmoBox / SM_Crate</code> или ваша <a href="custom-assets.html">своя модель</a>: нужен Simple Collision (иначе провалится) и Mobility Movable при физике. Scale 1.0, Pivot снизу. Сначала поставьте копию вручную — если ручная глючит, заспавненные тоже будут.</p></div>
+<h2 id="input">Кнопка F: Action Mapping (старый инпут 4.20!)</h2>
+<p><code>Edit → Project Settings → Engine → Input → Action Mappings → +</code> → имя <code>SpawnObject</code> → клавиша <span class="kbd">F</span>. Это СТАРАЯ система ввода — в ките (4.20.3) нет Enhanced Input, туториалы UE5 с <code>IA_</code> не подойдут. В Character или Level Blueprint: правый клик → событие <code>InputAction SpawnObject</code> появится само после маппинга. Не появилось — закройте/откройте Project Settings (фирменный глюк 4.20).</p>
+<h2 id="spawner">Спавнер: F → объект перед игроком</h2>
+<div class="step"><div class="step-head"><div class="step-num">3</div><h4>Граф (в PlayerCharacter или BP_Spawner на копии акта)</h4></div><p><code>InputAction SpawnObject (F) → Branch [CanSpawn? кулдаун прошёл] → позиция игрока + Forward × 200 см + Z +50 → Make Transform → Spawn Actor From Class (ваш BP, Collision Handling = Adjust If Possible But Always Spawn) → звук + счётчик → Do Once + Retriggerable Delay 0.5с</code>. Спавн впереди — иначе объект внутри игрока и физика взрывается. <b>Collision Handling</b> обязателен, иначе спавн в стене тихо не сработает.</p></div>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">InputAction SpawnObject (F)</div><div class="bp-arrow">↓</div>
+<div class="bp-node func">Позиция + Forward×200 + Z50 → Make Transform → <b>SpawnActor (Adjust Always Spawn)</b></div><div class="bp-arrow">↓</div>
+<div class="bp-node branch">DoOnce + кулдаун 0.5с → звук + счётчик</div>
+</div></div>
+<button class="btn bp-toggle" data-bp-toggle="bps">Показать разбор нод ▼</button>
+<div id="bps" style="display:none"><div class="bp-detail"><b>Forward × 200</b> — точка перед глазами, а не внутри черепа. <b>Spawn Actor From Class</b> — нужен Class (ваш BP) + Transform; возврат = созданный экземпляр (храните в Array, лимит 20, старых удаляйте). <b>Do Once + Delay</b> — анти-спам: держать F на 60 FPS без кулдауна = 3600 ящиков. <b>Play Sound at Location</b> — подтверждение.</div></div>
+<div class="alert alert-tip"><div class="ico">💡</div><div><strong>Совет: улучшения</strong><p>Цикл 3 объектов по F (Array + index++), спавн за предмет (Branch HasItem → Remove), спавн только в точку прицела (Line Trace → Hit Location).</p></div></div>
+<h2 id="pack">Упаковка и игра</h2>
+<p><code>Edit → Plugins → ваш мод → Package</code> → .pak/zip → Upload в Workshop (Steam запущен, игра куплена) или файл на ModDB. Игроки: подписаться/скопировать .pak → играть в ВАШУ копию акта из меню мода, жать F — объект появляется. Тестируйте упакованный билд, а не только PIE: кукер выкидывает неиспользуемые ассеты, поэтому сошлитесь на BP с карты (поставленный спавнер) или добавьте в <code>Project Settings → Packaging → List of maps to include</code>. Источники: ModDB Modding Guide (плагин/упаковка/игра), туто DrHello, доки UE 4.20 Input + SpawnActor, доки Epic по меню/UMG.</p>
+<details><summary>F не работает / спавн внутри меня / краш / нет в пакете?</summary><p>Нет события: имя маппинга не совпадает или старый инпут — пересоздайте + перезапустите редактор. Внутри меня: +200 вперёд + Z50 + Adjust-Always-Spawn. Краш: пустой Class или бесконечный спавн на Tick (только событие Pressed + кулдаун). Нет в пакете: жёсткая ссылка с карты + список карт в упаковке.</p></details>
+<div class="pager"><a href="troubleshooting.html"><span>← Назад</span><strong>Решение ошибок</strong></a><a href="custom-interaction.html"><span>Следующий урок →</span><strong>11. Действия с предметом</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний • Источники: ModDB Modding Guide, доки UE 4.20 • <a href="../spawn-acts.html">EN version</a></footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>

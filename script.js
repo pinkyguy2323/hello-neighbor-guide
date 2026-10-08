@@ -39,6 +39,10 @@
       ["blueprints-advanced.html","interface dispatcher function array struct enum power generator"],
       ["custom-neighbor.html","neighbor skeletal skeleton retarget t-pose anim"],
       ["troubleshooting.html","errors fix accessed none cast failed loop fps"],
+      ["spawn-acts.html","spawn original acts F key object plugin map level"],
+      ["custom-interaction.html","interaction held item LMB click sound trace"],
+      ["custom-menu.html","menu widget UMG main play quit open level"],
+      ["guides.html","user guides wiki add tutorial publish"],
       ["community.html","community wiki share posts users"],
       ["hosting.html","hosting free github netlify vercel cloudflare deploy"]
     ];
@@ -50,6 +54,6 @@
       inp.addEventListener("input",()=>render(inp.value));out.innerHTML="Type 2+ chars, e.g. key, light, water, Timeline…";}
     try{const p=location.pathname.split("/").pop()||"index.html";let s=[];try{s=JSON.parse(localStorage.getItem("hn-en-seen")||"[]");}catch(e){}
       if(!s.includes(p)){s.push(p);try{localStorage.setItem("hn-en-seen",JSON.stringify(s));}catch(e){}}
-      const bdg=document.getElementById("progressBadge");if(bdg)bdg.textContent="Visited: "+s.length+" / 13";}catch(e){}
+      const bdg=document.getElementById("progressBadge");if(bdg)bdg.textContent="Visited: "+s.length+" / 17";}catch(e){}
   });
 })();

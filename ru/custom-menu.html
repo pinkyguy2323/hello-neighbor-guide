@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12. Своё главное меню для мода — Hello Neighbor Mod Kit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+<div class="logo"><div class="logo-badge">📋</div><div>HELLO NEIGHBOR<br><small>MOD KIT • БАЗА ЗНАНИЙ</small></div></div>
+<div class="header-actions">
+<a class="btn" href="../custom-menu.html" title="English version">EN 🇬🇧</a>
+<button class="btn" id="themeToggle">☀️ Светлая</button>
+<button class="btn hamburger" id="burger">☰ Меню</button>
+</div></div></header>
+<div class="layout">
+<aside class="sidebar"><h3>Навигация по курсу</h3>
+<div class="search-box"><input id="siteSearch" type="text" placeholder="Поиск: спавн, меню, звук…"></div>
+<div class="search-results" id="searchResults"></div>
+<nav><ul class="nav-list" id="navList">
+<li><a href="index.html"><span class="nav-num">★</span>Главная</a></li>
+<li><a href="basics.html"><span class="nav-num">1</span>Основы карты</a></li>
+<li><a href="building.html"><span class="nav-num">2</span>Строительство</a></li>
+<li><a href="puzzles.html"><span class="nav-num">3</span>Головоломки</a></li>
+<li><a href="water.html"><span class="nav-num">4</span>Вода и акула</a></li>
+<li><a href="blueprints-basic.html"><span class="nav-num">5</span>Blueprint: основы</a></li>
+<li><a href="day-night.html"><span class="nav-num">6</span>День и ночь</a></li>
+<li><a href="custom-assets.html"><span class="nav-num">7</span>Свои модели</a></li>
+<li><a href="blueprints-advanced.html"><span class="nav-num">8</span>Продвинутые Blueprint</a></li>
+<li><a href="custom-neighbor.html"><span class="nav-num">9</span>Свой сосед</a></li>
+<li><a href="troubleshooting.html"><span class="nav-num">!</span>Решение ошибок</a></li>
+<li><a href="spawn-acts.html"><span class="nav-num">10</span>Спавн в акты (F)</a></li>
+<li><a href="custom-interaction.html"><span class="nav-num">11</span>Действия с предметом</a></li>
+<li><a href="custom-menu.html"><span class="nav-num">12</span>Меню мода</a></li>
+<li><a href="guides.html"><span class="nav-num">✎</span>Гайды игроков</a></li>
+</ul></nav><div class="mini" id="progressBadge">Пройдено разделов: 0 / 15</div></aside>
+<main class="content">
+<div class="page-head"><h1>12. Своё главное меню для мода</h1><p>Титульник с кнопками Играть / Как играть / Выйти: виджет <code>W_MainMenu</code> на UMG, OnClicked → Open Level / Remove from Parent, привязка в Level Blueprint, меню-GameMode, упаковка. По докам Epic «Creating a Main Menu» (4.27, те же ноды в 4.20) + блюпринтам меню с Reddit.</p><div class="badges"><span class="badge">★★ Средне</span><span class="badge orange">НОВОЕ</span><span class="badge green">UMG с нуля</span></div></div>
+<div class="toc"><h2>📑 Оглавление</h2><ol><li><a href="#w">Вёрстка виджета</a></li><li><a href="#b">Логика кнопок</a></li><li><a href="#l">Привязка уровня + GameMode</a></li><li><a href="#p">Упаковка + бонус паузы</a></li></ol></div>
+<div class="article">
+<button class="btn btn-ghost" data-expand-all>Развернуть все спойлеры</button>
+<h2 id="w">Вёрстка виджета (W_MainMenu)</h2>
+<p>Content Browser → <code>Add New → User Interface → Widget Blueprint → W_MainMenu</code>. Designer: <code>Canvas Panel → картинка-фон (ваш арт, тёмный + заголовок «МОЙ МОД» 64px) → Vertical Box по центру → 3 Button (Играть / Как играть / Выйти) с текстом 24px, отступы 10, имена PlayButton/HelpButton/QuitButton</code>. Якорь по центру, фокус потом на PlayButton (поддержка геймпада). Шрифты — стандартные: кастомные часто ломают кукер в 4.20.</p>
+<h2 id="b">Логика кнопок (вкладка Graph)</h2>
+<p>Выбираем PlayButton → Details → Events → <code>+ On Clicked</code> (так для всех). <code>OnClicked(Play) → Open Level (ваша копия акта, напр. Act1_FSpawn) → Remove from Parent (себя)</code>. <code>OnClicked(Help) → MainMenu Hidden + HelpPanel Visible</code> (Назад — наоборот). <code>OnClicked(Quit) → Execute Console Command «Quit»</code>. Имя уровня — ТОЧНО как файл (регистр важен!), иначе чёрный экран — ошибка меню №1. Compile + Save.</p>
+<div class="bp-flow"><div class="bp-row">
+<div class="bp-node event">OnClicked Play → <b>OpenLevel (Act1_FSpawn)</b> → Remove from Parent</div><div class="bp-arrow">↓</div>
+<div class="bp-node func">Help: переключение панелей | Quit: <b>консоль «Quit»</b></div>
+</div></div>
+<h2 id="l">Привязка уровня + GameMode</h2>
+<p>Меню нужна своя карта: <code>File → New → Empty → MenuMap</code> (чёрная комната + камера хватит). Её Level Blueprint: <code>Event BeginPlay → Create Widget (W_MainMenu) → Add to Viewport → Get Player Controller → Set Input Mode UI Only + Show Mouse Cursor true</code>. Без UI-Only клики пролетают в игру за меню. World Settings карты MenuMap: <code>GameMode Override = MenuGameMode</code> (дубликат китового GameMode с пустым пешкой-наблюдателем, чтобы никто не бегал за меню — приём из UMG-туто Epic). <code>Project Settings → Maps &amp; Modes → Game Default Map = MenuMap</code> + MenuMap и акты в список карт упаковки.</p>
+<div class="alert alert-important"><div class="ico">⚠️</div><div><strong>Важно: честность про Mod Kit</strong><p>Моды Workshop грузятся через меню модов игры — ваш MenuMap станет входом мода, а не заменой родного титульника (это глубже, ломается обновлениями). Пишите в описании: «Запустить мод → моё меню → Играть». Моддеры Reddit подтверждают: свои Main/Pause-меню блюпринтами работают; полная замена титульника хрупкая — лучше меню-картой входа.</p></div></div>
+<h2 id="p">Упаковка + бонус паузы</h2>
+<p>Пакуем плагин с MenuMap внутри, тестируем упакованный (PIE врёт про имена Open Level!). Бонус паузы: <code>Esc Action → Create W_Pause (Продолжить/Заново/Меню/Выйти) → Set Game Paused true + UI Only</code>; Продолжить → <code>Remove + Unpause + Game Only</code>. Сосед на паузе: <code>Set Game Paused</code>, а не Time Dilation 0 — дилейшн ломает Timeline-двери.</p>
+<details><summary>Чёрный экран / клики мертвы / игрок бегает за меню?</summary><p>Опечатка имени уровня (копипаст точного). Нет UI-Only + курсора. GameMode спавнит бегуна — переопределите пустой пешкой. Виджет создался дважды (двойной BeginPlay) — закройте DoOnce.</p></details>
+<div class="pager"><a href="custom-interaction.html"><span>← Назад</span><strong>11. Действия с предметом</strong></a><a href="guides.html"><span>Следующий урок →</span><strong>✎ Гайды игроков</strong></a></div>
+</div>
+</main>
+</div>
+<footer>Фанатская база знаний • Epic «Creating a Main Menu», доки UMG • <a href="../custom-menu.html">EN version</a></footer>
+<button id="toTop" title="Наверх">↑</button>
+<script src="script.js"></script>
+</body>
+</html>
